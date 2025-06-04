@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Login</title>
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="form-container sign-up-container">
+            <form>
+                <h2>Create Account</h2>
+                <div class="input-group">
+                    <input type="text" required>
+                    <label>Full Name</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="email" required>
+                    <label>Email</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" required>                 
+                    <label>Faculty ID</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" required>
+                    <label>Password</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="password" required>
+                    <label>Confirm Password</label>
+                </div>
+                
+                <button type="submit" class="form-btn">Sign Up</button>
+            </form>
+        </div>
+        
+        <div class="form-container sign-in-container">
+            <form>
+                <h2>Login</h2>
+                <div class="input-group">
+                    <input type="text" required>
+                    <span class="icon">👤</span>
+                    <label>Username</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" required>
+                    <span class="icon">🔒</span>
+                    <label>Password</label>
+                </div>
+                <div class="forgot-password">
+                    <a href="#">Forgot password?</a>
+                </div>
+                <button type="submit" class="form-btn">Login</button>
+            </form>
+        </div>
+        
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <img src="PUPLogo.png" alt="PUP Logo" class="logo">
+                    <h1>Welcome Back!</h1>
+                    <p>To keep connected with us please login with your personal info</p>
+                    <button class="ghost-btn" id="signIn">Sign In</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <img src="PUPLogo.png" alt="PUP Logo" class="logo">
+                    <h1>Mabuhay, Iskolar!</h1>
+                    <p>Enter your personal details and start your journey with us</p>
+                    <button class="ghost-btn" id="signUp">Register</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

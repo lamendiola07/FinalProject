@@ -8,7 +8,7 @@
 body {
     min-height: 100vh;
     background: #f0f2f5;
-    background-image: linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)), url('pupbg.jpg');
+    background-image: linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)), url('img/pupbg.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

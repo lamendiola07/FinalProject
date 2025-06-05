@@ -63,6 +63,7 @@ if (!isset($_SESSION['user_id'])) {
         .header h1 {
             font-size: 2.5em;
             margin: 0;
+            margin: 0;
         }
 
         .header p {
@@ -191,6 +192,7 @@ if (!isset($_SESSION['user_id'])) {
         }
 
         /* Responsive Design */
+        /* Responsive Design */
         @media (max-width: 768px) {
             .pup-logo {Add commentMore actions
                 position: static;
@@ -225,6 +227,21 @@ if (!isset($_SESSION['user_id'])) {
             th, td {
                 padding: 10px 8px;
                 font-size: 0.9em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .pup-logo {
+                width: 30px;
+                height: 30px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .header p {
+                font-size: 1em;
             }
         }
 

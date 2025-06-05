@@ -40,11 +40,29 @@ if (!isset($_SESSION['user_id'])) {
             color: white;
             padding: 30px;
             text-align: center;
+            position: relative;
+        }
+
+        .header-content {   
+            position: relative;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .pup-logo {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            transition: all 0.3s ease;
+            position: absolute;
+            left: -150px;
+            top: 70%;
+            transform: translateY(-50%);
         }
 
         .header h1 {
             font-size: 2.5em;
-            margin-bottom: 10px;
+            margin: 0;
         }
 
         .header p {
@@ -172,7 +190,25 @@ if (!isset($_SESSION['user_id'])) {
             font-style: italic;
         }
 
+        /* Responsive Design */
         @media (max-width: 768px) {
+            .pup-logo {Add commentMore actions
+                position: static;
+                transform: none;
+                width: 40px;
+                height: 40px;
+                display: block;
+                margin: 0 auto 10px auto;
+            }
+
+            .header-content {
+                display: block;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+            
             .controls {
                 flex-direction: column;
                 align-items: stretch;
@@ -191,12 +227,30 @@ if (!isset($_SESSION['user_id'])) {
                 font-size: 0.9em;
             }
         }
+
+        @media (max-width: 480px) {
+            .pup-logo {
+                width: 30px;
+                height: 30px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .header p {
+                font-size: 1em;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="dashboard-container">
         <div class="header">
-            <h1>PUP Dashboard</h1>
+            <div class="header-content">Add commentMore actions
+                <img src="img/PUPLogo.png" alt="PUP Logo" class="pup-logo" onerror="this.style.display='none'; console.log('Logo not found: pup-logo.png')">Add commentMore actions
+                <h1>PUP Dashboard</h1>
+            </div>
             <p>Welcome, <?php echo htmlspecialchars($_SESSION['user_name']); ?>!</p>
         </div>
         
@@ -210,7 +264,7 @@ if (!isset($_SESSION['user_id'])) {
 
             <div class="controls">
                 <button class="btn btn-primary" onclick="refreshTable()">Refresh Data</button>
-                <button class="btn btn-success" onclick="exportToXML()">Export to XML</button>
+                <button class="btn btn-success" onclick="exportToCSV()">Export to CSV</button>
                 <button class="btn btn-danger" onclick="logout()">Logout</button>
                 <input type="text" class="search-box" id="searchBox" placeholder="Search users..." onkeyup="searchTable()">
             </div>
@@ -311,9 +365,9 @@ if (!isset($_SESSION['user_id'])) {
             loadUsers();
         }
 
-        async function exportToXML() {
+        async function exportToCSV() {
             try {
-                const response = await fetch('export_xml.php', {
+                const response = await fetch('export_csv.php', {
                     method: 'GET'
                 });
 
@@ -322,18 +376,18 @@ if (!isset($_SESSION['user_id'])) {
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
-                    a.download = 'pup_users_' + new Date().toISOString().split('T')[0] + '.xml';
+                    a.download = 'pup_users_' + new Date().toISOString().split('T')[0] + '.csv';
                     document.body.appendChild(a);
                     a.click();
                     window.URL.revokeObjectURL(url);
                     document.body.removeChild(a);
                     
-                    alert('XML file downloaded successfully!');
+                    alert('CSV file downloaded successfully!');
                 } else {
                     throw new Error('Export failed');
                 }
             } catch (error) {
-                alert('Error exporting XML: ' + error.message);
+                alert('Error exporting CSV: ' + error.message);
             }
         }
 

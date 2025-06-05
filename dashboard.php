@@ -40,11 +40,29 @@ if (!isset($_SESSION['user_id'])) {
             color: white;
             padding: 30px;
             text-align: center;
+            position: relative;
+        }
+
+        .header-content {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .pup-logo {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            transition: all 0.3s ease;
+            position: absolute;
+            left: -150px;
+            top: 70%;
+            transform: translateY(-50%);
         }
 
         .header h1 {
             font-size: 2.5em;
-            margin-bottom: 10px;
+            margin: 0;
         }
 
         .header p {
@@ -172,7 +190,25 @@ if (!isset($_SESSION['user_id'])) {
             font-style: italic;
         }
 
+        /* Responsive Design */
         @media (max-width: 768px) {
+            .pup-logo {
+                position: static;
+                transform: none;
+                width: 40px;
+                height: 40px;
+                display: block;
+                margin: 0 auto 10px auto;
+            }
+
+            .header-content {
+                display: block;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
             .controls {
                 flex-direction: column;
                 align-items: stretch;
@@ -191,12 +227,30 @@ if (!isset($_SESSION['user_id'])) {
                 font-size: 0.9em;
             }
         }
+
+        @media (max-width: 480px) {
+            .pup-logo {
+                width: 30px;
+                height: 30px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .header p {
+                font-size: 1em;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="dashboard-container">
         <div class="header">
-            <h1>PUP Dashboard</h1>
+            <div class="header-content">
+                <img src="img/PUPLogo.png" alt="PUP Logo" class="pup-logo" onerror="this.style.display='none'; console.log('Logo not found: pup-logo.png')">
+                <h1>PUP Dashboard</h1>
+            </div>
             <p>Welcome, <?php echo htmlspecialchars($_SESSION['user_name']); ?>!</p>
         </div>
         

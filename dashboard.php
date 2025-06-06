@@ -264,11 +264,11 @@ if (!isset($_SESSION['user_id'])) {
 <body>
     <div class="dashboard-container">
         <div class="header">
-            <div class="header-content">Add commentMore actions
-                <img src="img/PUPLogo.png" alt="PUP Logo" class="pup-logo" onerror="this.style.display='none'; console.log('Logo not found: pup-logo.png')">Add commentMore actions
+            <div class="header-content">
+                <img src="img/PUPLogo.png" alt="PUP Logo" class="pup-logo" onerror="this.style.display='none'; console.log('Logo not found: pup-logo.png')">
                 <h1>PUP Dashboard</h1>
             </div>
-            <p>Welcome, <?php echo htmlspecialchars($_SESSION['user_name']); ?>!</p>
+            <p>Welcome, <strong><?php echo htmlspecialchars($_SESSION['user_name']); ?></strong>!</p>
         </div>
         
         <div class="content">

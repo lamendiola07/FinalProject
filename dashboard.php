@@ -194,7 +194,7 @@ if (!isset($_SESSION['user_id'])) {
         /* Responsive Design */
         /* Responsive Design */
         @media (max-width: 768px) {
-            .pup-logo {Add commentMore actions
+            .pup-logo {
                 position: static;
                 transform: none;
                 width: 40px;
@@ -282,6 +282,7 @@ if (!isset($_SESSION['user_id'])) {
             <div class="controls">
                 <button class="btn btn-primary" onclick="refreshTable()">Refresh Data</button>
                 <button class="btn btn-success" onclick="exportToCSV()">Export to CSV</button>
+                <button class="btn btn-success">Edit Grading Sheet</button>
                 <button class="btn btn-danger" onclick="logout()">Logout</button>
                 <input type="text" class="search-box" id="searchBox" placeholder="Search users..." onkeyup="searchTable()">
             </div>

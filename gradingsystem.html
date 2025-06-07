@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grading Sheet</title>
+    <link rel="stylesheet" href="css/grading_style.css">
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <div class="logo-space">
+                <img src="img/PUPLogo.png" alt="PUP Logo">
+            </div>
+            <h1>Grading Sheet</h1>
+        </div>
+        <div class="user-info">
+            <div class="user-icon">
+                👤
+            </div>
+            <p>Welcome Back!<u><span class="user-name" onclick="toggleUserDropdown()">John Doe</span></p></u>
+            <button class="logout-btn">Logout</button>
+            <div class="user-dropdown" id="userDropdown">
+                <div class="dropdown-header">User Information</div>
+                <div class="dropdown-item">
+                    <div class="dropdown-label">Faculty Name</div>
+                    <div class="dropdown-value">Taylor Alison Swift</div>
+                </div>
+                <div class="dropdown-item">
+                    <div class="dropdown-label">Faculty ID</div>
+                    <div class="dropdown-value">EMP-2024-001</div>
+                </div>
+                <div class="dropdown-item">
+                    <div class="dropdown-label">Email</div>
+                    <div class="dropdown-value">john.doe@pup.edu.ph</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="save-indicator" id="saveIndicator">
+        Saving...
+    </div>
+
+    <div class="container">
+        <div class="button-group">
+            <button class="btn btn-primary">Review Grading Sheet</button>
+            <button class="btn btn-secondary">Back</button>
+        </div>
+
+        <div class="status-section">
+            <div>
+                <div class="status-item">
+                    <div class="status-label">Encoding of Gradesheet Status:</div>
+                    <div class="status-value status-closed">CLOSED</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">Status</div>
+                    <div class="status-value">Grade sheet is not yet finalized</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">Subject</div>
+                    <div class="status-value">CMPE 30250: Computer Engineering Practice and Design 1</div>
+                </div>
+            </div>
+            <div>
+                <div class="status-item">
+                    <div class="status-label">School Year</div>
+                    <div class="status-value">2023-2024</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">Semester</div>
+                    <div class="status-value">Second</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">Section</div>
+                    <div class="status-value">BSCOE-4A</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">Schedule</div>
+                    <div class="status-value">TBA</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="message">
+            For best experience, please access grading sheet through PC or Laptop
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student Number</th>
+                        <th>Name</th>
+                        <th>First Grading</th>
+                        <th>Second Grading</th>
+                        <th>Computed Rating</th>
+                        <th>Final Rating</th>
+                        <th>Other</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="student-row">
+                        <td>2023-10177-MN-1</td>
+                        <td>GALATICO, REI ANTHONY LONOY</td>
+                        <td>
+                            <input type="number" 
+                                   class="grade-input" 
+                                   placeholder="0.00"
+                                   min="1.00" 
+                                   max="5.00" 
+                                   step="0.01"
+                                   data-student="2023-10177-MN-1"
+                                   data-grade-type="first"
+                                   onchange="handleGradeChange(this)"
+                                   oninput="handleGradeInput(this)">
+                        </td>
+                        <td>
+                            <input type="number" 
+                                   class="grade-input" 
+                                   placeholder="0.00"
+                                   min="1.00" 
+                                   max="5.00" 
+                                   step="0.01"
+                                   data-student="2023-10177-MN-1"
+                                   data-grade-type="second"
+                                   onchange="handleGradeChange(this)"
+                                   oninput="handleGradeInput(this)">
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr class="student-row">
+                        <td>2023-10178-MN-2</td>
+                        <td>SAMPLE STUDENT NAME</td>
+                        <td>
+                            <input type="number" 
+                                   class="grade-input" 
+                                   placeholder="0.00"
+                                   min="1.00" 
+                                   max="5.00" 
+                                   step="0.01"
+                                   data-student="2023-10178-MN-2"
+                                   data-grade-type="first"
+                                   onchange="handleGradeChange(this)"
+                                   oninput="handleGradeInput(this)">
+                        </td>
+                        <td>
+                            <input type="number" 
+                                   class="grade-input" 
+                                   placeholder="0.00"
+                                   min="1.00" 
+                                   max="5.00" 
+                                   step="0.01"
+                                   data-student="2023-10178-MN-2"
+                                   data-grade-type="second"
+                                   onchange="handleGradeChange(this)"
+                                   oninput="handleGradeInput(this)">
+                        </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="javascript/grading_script.js"></script>
+</body>
+</html>

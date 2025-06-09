@@ -282,7 +282,7 @@ if (!isset($_SESSION['user_id'])) {
             <div class="controls">
                 <button class="btn btn-primary" onclick="refreshTable()">Refresh Data</button>
                 <button class="btn btn-success" onclick="exportToCSV()">Export to CSV</button>
-                <button class="btn btn-success">Edit Grading Sheet</button>
+                <button class="btn btn-success" onclick="window.location.href='course_selection.html'">Edit Grading Sheet</button>
                 <button class="btn btn-danger" onclick="logout()">Logout</button>
                 <input type="text" class="search-box" id="searchBox" placeholder="Search users..." onkeyup="searchTable()">
             </div>

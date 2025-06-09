@@ -1,51 +1,5 @@
-// Sample course data
-let courseData = [
-    {
-        id: 1,
-        code: "CMPE 30250",
-        subject: "Computer Engineering Practice and Design 1",
-        sectionCode: "BSCOE-4A",
-        schedule: "MWF 10:00-11:30 AM",
-        schoolYear: "2023-2024",
-        semester: "Second"
-    },
-    {
-        id: 2,
-        code: "CMPE 30253",
-        subject: "Microprocessor Systems",
-        sectionCode: "BSCOE-4B",
-        schedule: "TTH 1:00-2:30 PM",
-        schoolYear: "2023-2024",
-        semester: "Second"
-    },
-    {
-        id: 3,
-        code: "MATH 30143",
-        subject: "Differential Equations",
-        sectionCode: "BSMATH-3A",
-        schedule: "MWF 8:00-9:30 AM",
-        schoolYear: "2023-2024",
-        semester: "First"
-    },
-    {
-        id: 4,
-        code: "PHYS 30123",
-        subject: "Electronics",
-        sectionCode: "BSPHYS-2A",
-        schedule: "TTH 10:00-11:30 AM",
-        schoolYear: "2022-2023",
-        semester: "Second"
-    },
-    {
-        id: 5,
-        code: "CMPE 30251",
-        subject: "Digital Signal Processing",
-        sectionCode: "BSCOE-4C",
-        schedule: "MWF 2:00-3:30 PM",
-        schoolYear: "2023-2024",
-        semester: "Second"
-    }
-];
+// Global variable to store course data
+let courseData = [];
 
 // Function to toggle user dropdown
 function toggleUserDropdown() {
@@ -81,12 +35,12 @@ function populateCoursesTable(courses) {
             <td>${index + 1}</td>
             <td><span class="course-code">${course.code}</span></td>
             <td>${course.subject}</td>
-            <td><span class="section-code">${course.sectionCode}</span></td>
+            <td><span class="section-code">${course.section_code}</span></td>
             <td><span class="schedule">${course.schedule}</span></td>
             <td>
                 <div class="action-buttons">
                     <button class="view-btn" onclick="viewGradingSheet(${course.id})">View</button>
-                    <button class="delete-btn" onclick="deleteCourse(${course.id}, '${course.code}', '${course.sectionCode}')">Delete</button>
+                    <button class="delete-btn" onclick="deleteCourse(${course.id}, '${course.code}', '${course.section_code}')">Delete</button>
                 </div>
             </td>
         `;
@@ -103,7 +57,7 @@ function filterCourses() {
 
     // Filter by school year
     if (schoolYear) {
-        filteredCourses = filteredCourses.filter(course => course.schoolYear === schoolYear);
+        filteredCourses = filteredCourses.filter(course => course.school_year === schoolYear);
     }
 
     // Filter by semester
@@ -116,16 +70,17 @@ function filterCourses() {
 
 // Function to view grading sheet
 function viewGradingSheet(courseId) {
-    const course = courseData.find(c => c.id === courseId);
+    const course = courseData.find(c => c.id == courseId);
     
     if (course) {
         // Create URL with course parameters
         const params = new URLSearchParams({
+            id: course.id,
             code: course.code,
             title: course.subject,
-            section: course.sectionCode,
+            section: course.section_code,
             schedule: course.schedule,
-            schoolYear: course.schoolYear,
+            schoolYear: course.school_year,
             semester: course.semester
         });
         
@@ -135,30 +90,33 @@ function viewGradingSheet(courseId) {
 }
 
 // Function to delete a course
-function deleteCourse(courseId, courseCode, sectionCode) {
+async function deleteCourse(courseId, courseCode, sectionCode) {
     // Show confirmation dialog
     const confirmMessage = `Are you sure you want to delete the course:\n\n${courseCode} - ${sectionCode}\n\nThis action cannot be undone.`;
     
     if (confirm(confirmMessage)) {
-        // Find the course index
-        const courseIndex = courseData.findIndex(course => course.id === courseId);
-        
-        if (courseIndex !== -1) {
-            // Remove the course from the array
-            const deletedCourse = courseData.splice(courseIndex, 1)[0];
+        try {
+            const response = await fetch('course_api.php', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id: courseId })
+            });
             
-            console.log('Course deleted:', deletedCourse);
-            console.log('Remaining courses:', courseData.length);
+            const data = await response.json();
             
-            // Show success message
-            showSuccessMessage(`Course "${courseCode} - ${sectionCode}" deleted successfully!`);
-            
-            // Refresh the table with current filters
-            setTimeout(() => {
-                filterCourses();
-            }, 100);
-        } else {
-            alert('Course not found. Unable to delete.');
+            if (data.success) {
+                // Show success message
+                showSuccessMessage(`Course "${courseCode} - ${sectionCode}" deleted successfully!`);
+                
+                // Reload courses
+                loadCourses();
+            } else {
+                alert('Error: ' + data.message);
+            }
+        } catch (error) {
+            alert('Error deleting course: ' + error.message);
         }
     }
 }
@@ -201,177 +159,76 @@ function showSuccessMessage(message) {
     }, 3000);
 }
 
-// Function to add new course
-function addNewCourse(event) {
+// Function to load courses from the server
+async function loadCourses() {
+    try {
+        const response = await fetch('course_api.php');
+        const data = await response.json();
+        
+        if (data.success) {
+            courseData = data.courses;
+            filterCourses(); // Apply any filters and display courses
+        } else {
+            alert('Error loading courses: ' + data.message);
+        }
+    } catch (error) {
+        alert('Error loading courses: ' + error.message);
+    }
+}
+
+// Function to add a new course
+async function addCourse(event) {
     event.preventDefault();
     
-    const form = document.getElementById('addCourseForm');
-    const formData = new FormData(form);
+    const courseCode = document.getElementById('courseCode').value;
+    const courseSubject = document.getElementById('courseSubject').value;
+    const courseSectionCode = document.getElementById('courseSectionCode').value;
+    const courseSchedule = document.getElementById('courseSchedule').value;
+    const courseSchoolYear = document.getElementById('courseSchoolYear').value;
+    const courseSemester = document.getElementById('courseSemester').value;
     
-    // Validate form data
-    const courseCode = formData.get('courseCode').trim();
-    const courseSubject = formData.get('courseSubject').trim();
-    const courseSectionCode = formData.get('courseSectionCode').trim();
-    const courseSchedule = formData.get('courseSchedule').trim();
-    const courseSchoolYear = formData.get('courseSchoolYear');
-    const courseSemester = formData.get('courseSemester');
-    
-    // Check if all fields are filled
-    if (!courseCode || !courseSubject || !courseSectionCode || !courseSchedule || !courseSchoolYear || !courseSemester) {
-        alert('Please fill in all required fields.');
-        return;
-    }
-    
-    // Check for duplicate course code and section
-    const isDuplicate = courseData.some(course => 
-        course.code.toLowerCase() === courseCode.toLowerCase() && 
-        course.sectionCode.toLowerCase() === courseSectionCode.toLowerCase() &&
-        course.schoolYear === courseSchoolYear &&
-        course.semester === courseSemester
-    );
-    
-    if (isDuplicate) {
-        alert('A course with the same code and section already exists for this school year and semester.');
-        return;
-    }
-    
-    // Generate new ID
-    const newId = courseData.length > 0 ? Math.max(...courseData.map(c => c.id)) + 1 : 1;
-    
-    // Create new course object
-    const newCourse = {
-        id: newId,
-        code: courseCode,
-        subject: courseSubject,
-        sectionCode: courseSectionCode,
-        schedule: courseSchedule,
-        schoolYear: courseSchoolYear,
-        semester: courseSemester
-    };
-    
-    // Add to course data
-    courseData.push(newCourse);
-    
-    console.log('Course added:', newCourse);
-    console.log('Total courses:', courseData.length);
-    
-    // Close modal and reset form
-    closeAddCourseModal();
-    
-    // Show success message
-    showSuccessMessage('Course added successfully!');
-    
-    // Force refresh the table - apply the current filters again
-    setTimeout(() => {
-        const currentSchoolYear = document.getElementById('schoolYear').value;
-        const currentSemester = document.getElementById('semester').value;
+    try {
+        const response = await fetch('course_api.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                code: courseCode,
+                subject: courseSubject,
+                sectionCode: courseSectionCode,
+                schedule: courseSchedule,
+                schoolYear: courseSchoolYear,
+                semester: courseSemester
+            })
+        });
         
-        console.log('Current filters - School Year:', currentSchoolYear, 'Semester:', currentSemester);
+        const data = await response.json();
         
-        let filteredCourses = courseData.slice(); // Create a copy of the array
-        
-        // Apply filters
-        if (currentSchoolYear) {
-            filteredCourses = filteredCourses.filter(course => course.schoolYear === currentSchoolYear);
+        if (data.success) {
+            // Close modal and reset form
+            closeAddCourseModal();
+            
+            // Show success message
+            showSuccessMessage(`Course "${courseCode} - ${courseSectionCode}" added successfully!`);
+            
+            // Reload courses
+            loadCourses();
+        } else {
+            alert('Error: ' + data.message);
         }
-        
-        if (currentSemester) {
-            filteredCourses = filteredCourses.filter(course => course.semester === currentSemester);
-        }
-        
-        console.log('Filtered courses:', filteredCourses);
-        
-        // Populate table with filtered results
-        populateCoursesTable(filteredCourses);
-        
-        // Check if the new course should be visible with current filters
-        const shouldBeVisible = (!currentSchoolYear || newCourse.schoolYear === currentSchoolYear) &&
-                              (!currentSemester || newCourse.semester === currentSemester);
-        
-        if (shouldBeVisible) {
-            // Highlight the new course row
-            setTimeout(() => {
-                const tableRows = document.querySelectorAll('#coursesTableBody tr');
-                if (tableRows.length > 0) {
-                    // Find the row that contains our new course
-                    for (let row of tableRows) {
-                        const codeCell = row.querySelector('.course-code');
-                        if (codeCell && codeCell.textContent === newCourse.code) {
-                            row.style.backgroundColor = '#d4edda';
-                            row.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            
-                            setTimeout(() => {
-                                row.style.backgroundColor = '';
-                            }, 3000);
-                            break;
-                        }
-                    }
-                }
-            }, 200);
-        }
-    }, 100);
-}
-
-// Function to reset filters
-function resetFilters() {
-    document.getElementById('schoolYear').value = '';
-    document.getElementById('semester').value = '';
-    populateCoursesTable(courseData);
-}
-
-// Function to handle logout
-function handleLogout() {
-    if (confirm('Are you sure you want to logout?')) {
-        // Clear any stored data if needed
-        // Redirect to login page or home page
-        window.location.href = 'login.html';
+    } catch (error) {
+        alert('Error adding course: ' + error.message);
     }
 }
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', function() {
-    // Set default filter values and populate table
-    document.getElementById('schoolYear').value = '2023-2024';
-    document.getElementById('semester').value = 'Second';
+    // Load courses from server
+    loadCourses();
     
-    // Apply initial filter
-    filterCourses();
-    
-    // Add event listeners for filter changes
-    document.getElementById('schoolYear').addEventListener('change', filterCourses);
-    document.getElementById('semester').addEventListener('change', filterCourses);
-    
-    // Add form submission handler
-    document.getElementById('addCourseForm').addEventListener('submit', addNewCourse);
-    
-    // Add logout button event listener
-    const logoutBtn = document.querySelector('.logout-btn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', handleLogout);
-    }
-    
-    // Add keyboard shortcuts
-    document.addEventListener('keydown', function(event) {
-        // ESC key to close modal
-        if (event.key === 'Escape') {
-            const modal = document.getElementById('addCourseModal');
-            if (modal.style.display === 'block') {
-                closeAddCourseModal();
-            }
-            
-            // Close dropdown if open
-            const dropdown = document.getElementById('userDropdown');
-            if (dropdown.classList.contains('show')) {
-                dropdown.classList.remove('show');
-            }
-        }
-        
-        // Ctrl+A to add new course
-        if (event.ctrlKey && event.key === 'a') {
-            event.preventDefault();
-            openAddCourseModal();
-        }
-    });
+    // Set up form submission handler
+    document.getElementById('addCourseForm').addEventListener('submit', addCourse);
 });
 
 // Close modal when clicking outside of it

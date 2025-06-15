@@ -85,7 +85,7 @@ function viewGradingSheet(courseId) {
         });
         
         // Navigate to grading system page with parameters
-        window.location.href = `gradingsystem.html?${params.toString()}`;
+        window.location.href = `gradingsystem.php?${params.toString()}`;
     }
 }
 
@@ -167,7 +167,8 @@ async function loadCourses() {
         
         if (data.success) {
             courseData = data.courses;
-            filterCourses(); // Apply any filters and display courses
+            populateCoursesTable(courseData); // Changed this line to show all courses initially
+            filterCourses(); // Then apply any filters
         } else {
             alert('Error loading courses: ' + data.message);
         }
@@ -258,3 +259,16 @@ window.deleteCourse = deleteCourse;
 window.resetFilters = resetFilters;
 window.openAddCourseModal = openAddCourseModal;
 window.closeAddCourseModal = closeAddCourseModal;
+
+
+function logout() {
+    window.location.href = 'auth_handler.php?action=logout';
+}
+
+// Add click event listener to logout buttons
+document.addEventListener('DOMContentLoaded', function() {
+    const logoutBtn = document.querySelector('.logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
+    }
+});

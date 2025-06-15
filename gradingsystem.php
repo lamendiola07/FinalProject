@@ -18,7 +18,7 @@
             <div class="user-icon">
                 👤
             </div>
-            <p>Welcome Back!<u><span class="user-name" onclick="toggleUserDropdown()">John Doe</span></u></p>
+            <p>Welcome Back!<u><span class="user-name" onclick="toggleUserDropdown()"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span></u></p>
             <button class="logout-btn">Logout</button>
             <div class="user-dropdown" id="userDropdown">
                 <div class="dropdown-header">User Information</div>

@@ -142,7 +142,7 @@ function getStudentName(studentNumber) {
 
 // Function to go back to course selection
 function goBackToCourseSelection() {
-    window.location.href = 'course_selection.html';
+    window.location.href = 'course_selection.php';
 }
 
 // Function to load students and grades for the current course
@@ -278,4 +278,17 @@ function loadCourseInfo() {
 // Initialize page
 document.addEventListener('DOMContentLoaded', function() {
     loadCourseInfo();
+});
+
+
+function logout() {
+    window.location.href = 'auth_handler.php?action=logout';
+}
+
+// Add click event listener to logout buttons
+document.addEventListener('DOMContentLoaded', function() {
+    const logoutBtn = document.querySelector('.logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
+    }
 });

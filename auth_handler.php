@@ -121,6 +121,11 @@ function handleLogin($pdo, $data) {
     }
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'logout') {
+    session_destroy();
+    header('Location: index.html');
+    exit;
+}
 function handleLogout() {
     session_destroy();
     echo json_encode(['success' => true, 'message' => 'Logged out successfully']);

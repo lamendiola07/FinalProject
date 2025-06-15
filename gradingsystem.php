@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+// Check if user is not logged in
+if (!isset($_SESSION['user_id'])) {
+    header('Location: index.html');
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,24 +24,22 @@
             <h1>Grading Sheet</h1>
         </div>
         <div class="user-info">
-            <div class="user-icon">
-                👤
-            </div>
-            <p>Welcome Back!<u><span class="user-name" onclick="toggleUserDropdown()"><?php echo htmlspecialchars($_SESSION['user_name']); ?></span></u></p>
-            <button class="logout-btn">Logout</button>
+            <div class="user-icon">👤</div>
+            <span class="user-name" onclick="toggleUserDropdown()"><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'Guest'); ?></span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
             <div class="user-dropdown" id="userDropdown">
                 <div class="dropdown-header">User Information</div>
                 <div class="dropdown-item">
                     <div class="dropdown-label">Faculty Name</div>
-                    <div class="dropdown-value">Taylor Alison Swift</div>
+                    <div class="dropdown-value"><?php echo htmlspecialchars($_SESSION['user_name'] ?? ''); ?></div>
                 </div>
                 <div class="dropdown-item">
                     <div class="dropdown-label">Faculty ID</div>
-                    <div class="dropdown-value">EMP-2024-001</div>
+                    <div class="dropdown-value"><?php echo htmlspecialchars($_SESSION['faculty_id'] ?? ''); ?></div>
                 </div>
                 <div class="dropdown-item">
                     <div class="dropdown-label">Email</div>
-                    <div class="dropdown-value">john.doe@pup.edu.ph</div>
+                    <div class="dropdown-value"><?php echo htmlspecialchars($_SESSION['user_email'] ?? ''); ?></div>
                 </div>
             </div>
         </div>
@@ -212,20 +219,37 @@
         }
 
         // Function to toggle user dropdown
+        function logout() {
+            fetch('auth_handler.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    action: 'logout'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = 'index.html';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
         function toggleUserDropdown() {
             const dropdown = document.getElementById('userDropdown');
-            dropdown.classList.toggle('show');
+            dropdown.classList.toggle('active');
         }
 
         // Close dropdown when clicking outside
-        document.addEventListener('click', function(event) {
-            const dropdown = document.getElementById('userDropdown');
-            const userName = document.querySelector('.user-name');
-            
-            if (!dropdown.contains(event.target) && !userName.contains(event.target)) {
-                dropdown.classList.remove('show');
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.user-info')) {
+                document.getElementById('userDropdown').classList.remove('active');
             }
         });
+    </script>
 
         // Grade handling functions
         function handleGradeInput(input) {

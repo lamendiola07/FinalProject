@@ -140,11 +140,6 @@ function getStudentName(studentNumber) {
     return '';
 }
 
-// Function to go back to course selection
-function goBackToCourseSelection() {
-    window.location.href = 'course_selection.php';
-}
-
 // Function to load students and grades for the current course
 async function loadStudentsAndGrades() {
     try {

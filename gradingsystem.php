@@ -215,7 +215,7 @@ if (!isset($_SESSION['user_id'])) {
 
         // Function to go back to course selection
         function goBackToCourseSelection() {
-            window.location.href = 'course_selection.html';
+            window.location.href = 'course_selection.php';
         }
 
         // Function to toggle user dropdown

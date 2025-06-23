@@ -251,6 +251,7 @@ if (!isset($_SESSION['user_id'])) {
         });
     </script>
 
+    <script>
         // Grade handling functions
         function handleGradeInput(input) {
             // Real-time validation
@@ -294,7 +295,6 @@ if (!isset($_SESSION['user_id'])) {
             const secondGrade = parseFloat(secondGradeInput.value) || 0;
 
             if (firstGrade > 0 && secondGrade > 0) {
-                // Simple average calculation (you can modify this formula as needed)
                 const computedRating = ((firstGrade + secondGrade) / 2).toFixed(2);
                 computedRatingCell.textContent = computedRating;
                 finalRatingCell.textContent = computedRating;

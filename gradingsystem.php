@@ -195,7 +195,6 @@ if (!isset($_SESSION['user_id'])) {
             const schoolYear = getUrlParameter('schoolYear');
             const semester = getUrlParameter('semester');
 
-            // Update the page with course information if parameters exist
             if (courseCode && courseTitle) {
                 document.getElementById('subjectInfo').textContent = `${courseCode}: ${courseTitle}`;
             }
@@ -215,10 +214,10 @@ if (!isset($_SESSION['user_id'])) {
 
         // Function to go back to course selection
         function goBackToCourseSelection() {
-            window.location.href = 'course_selection.php';
+            window.location.href = 'course_selection.html';
         }
 
-        // Function to toggle user dropdown
+        // Function to handle logout
         function logout() {
             fetch('auth_handler.php', {
                 method: 'POST',
@@ -238,6 +237,7 @@ if (!isset($_SESSION['user_id'])) {
             .catch(error => console.error('Error:', error));
         }
 
+        // Function to toggle user dropdown
         function toggleUserDropdown() {
             const dropdown = document.getElementById('userDropdown');
             dropdown.classList.toggle('active');
@@ -249,12 +249,9 @@ if (!isset($_SESSION['user_id'])) {
                 document.getElementById('userDropdown').classList.remove('active');
             }
         });
-    </script>
 
-    <script>
         // Grade handling functions
         function handleGradeInput(input) {
-            // Real-time validation
             const value = parseFloat(input.value);
             if (value < 1.00 || value > 5.00) {
                 input.style.borderColor = '#dc3545';
@@ -268,20 +265,14 @@ if (!isset($_SESSION['user_id'])) {
             const gradeType = input.dataset.gradeType;
             const value = parseFloat(input.value);
 
-            // Validate grade range
             if (value < 1.00 || value > 5.00) {
                 alert('Grade must be between 1.00 and 5.00');
                 input.focus();
                 return;
             }
 
-            // Show saving indicator
             showSaveIndicator();
-
-            // Calculate computed and final ratings
             calculateRatings(studentId);
-
-            // Hide saving indicator after a short delay
             setTimeout(hideSaveIndicator, 1000);
         }
 
@@ -323,5 +314,151 @@ if (!isset($_SESSION['user_id'])) {
             loadCourseInfo();
         });
     </script>
+</body>
+</html>
+
+<!-- Add these modal elements before the closing body tag -->
+<div id="studentModal" class="modal">
+    <div class="modal-content">
+        <h2 id="studentModalTitle">Add Student</h2>
+        <form id="studentForm" onsubmit="handleStudentSubmit(event)">
+            <input type="hidden" id="editMode" value="add">
+            <div class="form-group">
+                <label for="studentNumber">Student Number:</label>
+                <input type="text" id="studentNumber" required pattern="\d{4}-\d{5}-[A-Z]{2}-\d{1}">
+            </div>
+            <div class="form-group">
+                <label for="studentName">Full Name:</label>
+                <input type="text" id="studentName" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="button" class="btn btn-secondary" onclick="closeStudentModal()">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openAddStudentModal() {
+        document.getElementById('studentModal').style.display = 'block';
+        document.getElementById('studentModalTitle').textContent = 'Add Student';
+        document.getElementById('editMode').value = 'add';
+        document.getElementById('studentForm').reset();
+    }
+
+    function openEditStudentModal(studentId) {
+        const row = document.querySelector(`tr[data-student-id="${studentId}"]`);
+        document.getElementById('studentModal').style.display = 'block';
+        document.getElementById('studentModalTitle').textContent = 'Edit Student';
+        document.getElementById('editMode').value = 'edit';
+        document.getElementById('studentNumber').value = row.cells[0].textContent;
+        document.getElementById('studentName').value = row.cells[1].textContent;
+    }
+
+    function closeStudentModal() {
+        document.getElementById('studentModal').style.display = 'none';
+    }
+
+    function importCSV() {
+        const fileInput = document.getElementById('csvFile');
+        const file = fileInput.files[0];
+        if (!file) {
+            alert('Please select a CSV file first');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const text = e.target.result;
+            const rows = text.split('\n');
+            rows.forEach((row, index) => {
+                if (index === 0) return; // Skip header row
+                const columns = row.split(',');
+                if (columns.length >= 4) {
+                    const studentNumber = columns[0].trim();
+                    const studentName = columns[1].trim();
+                    const firstGrade = columns[2].trim();
+                    const secondGrade = columns[3].trim();
+                    updateStudentGrades(studentNumber, firstGrade, secondGrade);
+                }
+            });
+            alert('Grades imported successfully!');
+        };
+        reader.readAsText(file);
+    }
+
+    function updateStudentGrades(studentNumber, firstGrade, secondGrade) {
+        const firstGradeInput = document.querySelector(`input[data-student="${studentNumber}"][data-grade-type="first"]`);
+        const secondGradeInput = document.querySelector(`input[data-student="${studentNumber}"][data-grade-type="second"]`);
+        
+        if (firstGradeInput && secondGradeInput) {
+            firstGradeInput.value = firstGrade;
+            secondGradeInput.value = secondGrade;
+            calculateRatings(studentNumber);
+        }
+    }
+
+    function handleStudentSubmit(event) {
+        event.preventDefault();
+        const studentNumber = document.getElementById('studentNumber').value;
+        const studentName = document.getElementById('studentName').value;
+        const editMode = document.getElementById('editMode').value;
+
+        if (editMode === 'add') {
+            addStudentToTable(studentNumber, studentName);
+        } else {
+            updateStudentInTable(studentNumber, studentName);
+        }
+
+        closeStudentModal();
+    }
+
+    function addStudentToTable(studentNumber, studentName) {
+        const tbody = document.getElementById('studentsTableBody');
+        const newRow = document.createElement('tr');
+        newRow.className = 'student-row';
+        newRow.dataset.studentId = studentNumber;
+
+        newRow.innerHTML = `
+            <td>${studentNumber}</td>
+            <td>${studentName}</td>
+            <td>
+                <input type="number" class="grade-input" placeholder="0.00"
+                       min="1.00" max="5.00" step="0.01"
+                       data-student="${studentNumber}" data-grade-type="first"
+                       onchange="handleGradeChange(this)" oninput="handleGradeInput(this)">
+            </td>
+            <td>
+                <input type="number" class="grade-input" placeholder="0.00"
+                       min="1.00" max="5.00" step="0.01"
+                       data-student="${studentNumber}" data-grade-type="second"
+                       onchange="handleGradeChange(this)" oninput="handleGradeInput(this)">
+            </td>
+            <td class="computed-rating" data-student="${studentNumber}"></td>
+            <td class="final-rating" data-student="${studentNumber}"></td>
+            <td>
+                <button onclick="openEditStudentModal('${studentNumber}')">Edit</button>
+                <button onclick="deleteStudent('${studentNumber}')">Delete</button>
+            </td>
+        `;
+
+        tbody.appendChild(newRow);
+    }
+
+    function updateStudentInTable(studentNumber, studentName) {
+        const row = document.querySelector(`tr[data-student-id="${studentNumber}"]`);
+        if (row) {
+            row.cells[1].textContent = studentName;
+        }
+    }
+
+    function deleteStudent(studentNumber) {
+        if (confirm('Are you sure you want to delete this student?')) {
+            const row = document.querySelector(`tr[data-student-id="${studentNumber}"]`);
+            if (row) {
+                row.remove();
+            }
+        }
+    }
+</script>
 </body>
 </html>

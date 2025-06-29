@@ -705,3 +705,30 @@ body {
 .delete-btn:hover {
     background-color: #c82333;
 }
+
+/* Add Student Modal */
+
+/* Add Student Modal Styles */
+.course-info {
+    margin-bottom: 20px;
+}
+
+.course-info span {
+    font-weight: bold;
+    color: #333;
+}
+
+.add-student-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+    font-size: 14px;
+}
+
+.add-student-btn:hover {
+    background-color: #45a049;
+}

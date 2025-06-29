@@ -152,6 +152,41 @@ if (!isset($_SESSION['user_id'])) {
         </div>
     </div>
 
+    <!-- Add Student Modal -->
+    <!-- Add Student Modal -->
+    <div id="addStudentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddStudentModal()">&times;</span>
+            <h2>Add Student to Course</h2>
+            <form id="addStudentForm">
+                <input type="hidden" id="studentCourseId" name="courseId">
+                <input type="hidden" id="studentCourseCode" name="courseCode">
+                <input type="hidden" id="studentSectionCode" name="sectionCode">
+                
+                <div class="form-group">
+                    <label for="studentNumber">Student Number</label>
+                    <input type="text" id="studentNumber" name="studentNumber" required placeholder="e.g., 2020-00001">
+                </div>
+                
+                <div class="form-group">
+                    <label for="studentName">Full Name</label>
+                    <input type="text" id="studentName" name="studentName" required placeholder="e.g., Juan Dela Cruz">
+                </div>
+                
+                <div class="form-group course-info">
+                    <label>Course:</label>
+                    <span id="courseInfoDisplay"></span>
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="button" class="btn-secondary" onclick="closeAddStudentModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Add Student</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+    
     <script>
         function logout() {
             fetch('auth_handler.php', {

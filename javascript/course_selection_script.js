@@ -40,6 +40,7 @@ function populateCoursesTable(courses) {
             <td>
                 <div class="action-buttons">
                     <button class="view-btn" onclick="viewGradingSheet(${course.id})">View</button>
+                    <button class="add-student-btn" onclick="openAddStudentModal(${course.id}, '${course.code}', '${course.section_code}')">Add Student</button>
                     <button class="delete-btn" onclick="deleteCourse(${course.id}, '${course.code}', '${course.section_code}')">Delete</button>
                 </div>
             </td>
@@ -272,3 +273,84 @@ document.addEventListener('DOMContentLoaded', function() {
         logoutBtn.addEventListener('click', logout);
     }
 });
+
+// Function to open add student modal
+function openAddStudentModal(courseId, courseCode, sectionCode) {
+    document.getElementById('studentCourseId').value = courseId;
+    document.getElementById('studentCourseCode').value = courseCode;
+    document.getElementById('studentSectionCode').value = sectionCode;
+    document.getElementById('courseInfoDisplay').textContent = `${courseCode} - ${sectionCode}`;
+    document.getElementById('addStudentModal').style.display = 'block';
+    document.getElementById('addStudentForm').reset();
+}
+
+// Function to close add student modal
+function closeAddStudentModal() {
+    document.getElementById('addStudentModal').style.display = 'none';
+    document.getElementById('addStudentForm').reset();
+}
+
+// Function to add a student to a course
+async function addStudent(event) {
+    event.preventDefault();
+    
+    const courseId = document.getElementById('studentCourseId').value;
+    const courseCode = document.getElementById('studentCourseCode').value;
+    const sectionCode = document.getElementById('studentSectionCode').value;
+    const studentNumber = document.getElementById('studentNumber').value;
+    const studentName = document.getElementById('studentName').value;
+    
+    try {
+        const response = await fetch('grades_api.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                course_id: courseId,
+                student_number: studentNumber,
+                full_name: studentName,
+                course_code: courseCode,
+                section_code: sectionCode
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Show success message
+            showSuccessMessage(`Student "${studentName}" added successfully to ${courseCode}!`);
+            
+            // Close modal
+            closeAddStudentModal();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    } catch (error) {
+        alert('Error adding student: ' + error.message);
+    }
+}
+
+// Add event listener for the student form submission
+document.addEventListener('DOMContentLoaded', function() {
+    // Existing event listeners...
+    
+    // Add student form submission
+    const addStudentForm = document.getElementById('addStudentForm');
+    if (addStudentForm) {
+        addStudentForm.addEventListener('submit', addStudent);
+    }
+    
+    // Close add student modal when clicking outside
+    window.addEventListener('click', function(event) {
+        const addStudentModal = document.getElementById('addStudentModal');
+        if (event.target === addStudentModal) {
+            closeAddStudentModal();
+        }
+    });
+});
+
+// Export functions for global access
+window.openAddStudentModal = openAddStudentModal;
+window.closeAddStudentModal = closeAddStudentModal;
+window.addStudent = addStudent;

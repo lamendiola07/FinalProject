@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Record & Grading System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #4a5568;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 5px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .nav-tab {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px 20px;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f56565, #e53e3e);
+            color: white;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        tr:hover {
+            background: #f7fafc;
+        }
+
+        .grade-input {
+            width: 80px;
+            padding: 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+
+        .alert-error {
+            background: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #feb2b2;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .nav-tab {
+                min-width: 100%;
+            }
+
+            .tab-content {
+                padding: 20px;
+            }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Class Record System</h1>
+            <p>Comprehensive student grading and course management platform</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('courses')">📖 Courses</button>
+            <button class="nav-tab" onclick="showTab('students')">👥 Students</button>
+            <button class="nav-tab" onclick="showTab('grades')">📊 Grades</button>
+            <button class="nav-tab" onclick="showTab('reports')">📈 Reports</button>
+        </div>
+
+        <!-- Courses Tab -->
+        <div id="courses" class="tab-content active">
+            <h2>Course Management</h2>
+            <div class="form-group">
+                <label for="courseName">Course Name</label>
+                <input type="text" id="courseName" class="form-control" placeholder="e.g., Mathematics 101">
+            </div>
+            <div class="form-group">
+                <label for="courseSection">Section</label>
+                <input type="text" id="courseSection" class="form-control" placeholder="e.g., A, B, C">
+            </div>
+            <div class="form-group">
+                <label for="courseCredits">Credits</label>
+                <input type="number" id="courseCredits" class="form-control" placeholder="3" min="1" max="6">
+            </div>
+            <button class="btn btn-primary" onclick="addCourse()">Add Course</button>
+
+            <div class="table-container">
+                <h3>Existing Courses</h3>
+                <table id="coursesTable">
+                    <thead>
+                        <tr>
+                            <th>Course Name</th>
+                            <th>Section</th>
+                            <th>Credits</th>
+                            <th>Students</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="coursesTableBody">
+                        <!-- Courses will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Students Tab -->
+        <div id="students" class="tab-content">
+            <h2>Student Management</h2>
+            <div class="form-group">
+                <label for="studentName">Student Name</label>
+                <input type="text" id="studentName" class="form-control" placeholder="Enter student name">
+            </div>
+            <div class="form-group">
+                <label for="studentId">Student ID</label>
+                <input type="text" id="studentId" class="form-control" placeholder="Enter student ID">
+            </div>
+            <div class="form-group">
+                <label for="studentCourse">Select Course</label>
+                <select id="studentCourse" class="form-control">
+                    <option value="">Select a course</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="addStudent()">Add Student</button>
+
+            <div class="table-container">
+                <h3>Students by Course</h3>
+                <div class="form-group">
+                    <label for="filterCourse">Filter by Course</label>
+                    <select id="filterCourse" class="form-control" onchange="filterStudents()">
+                        <option value="">All Courses</option>
+                    </select>
+                </div>
+                <table id="studentsTable">
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Student ID</th>
+                            <th>Course</th>
+                            <th>Section</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsTableBody">
+                        <!-- Students will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Grades Tab -->
+        <div id="grades" class="tab-content">
+            <h2>Grade Management</h2>
+            <div class="form-group">
+                <label for="gradeCourse">Select Course</label>
+                <select id="gradeCourse" class="form-control" onchange="loadStudentsForGrading()">
+                    <option value="">Select a course</option>
+                </select>
+            </div>
+
+            <div id="gradingSection" style="display: none;">
+                <h3>Enter Grades</h3>
+                <div class="table-container">
+                    <table id="gradesTable">
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Student ID</th>
+                                <th>Prelim</th>
+                                <th>Midterm</th>
+                                <th>Final</th>
+                                <th>Final Grade</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gradesTableBody">
+                            <!-- Grades will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                <button class="btn btn-success" onclick="saveAllGrades()">Save All Grades</button>
+            </div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div id="reports" class="tab-content">
+            <h2>Academic Reports</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 id="totalCourses">0</h3>
+                    <p>Total Courses</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="totalStudents">0</h3>
+                    <p>Total Students</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="averageGrade">0.00</h3>
+                    <p>Average Grade</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="passRate">0%</h3>
+                    <p>Pass Rate</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="reportCourse">Course Report</label>
+                <select id="reportCourse" class="form-control" onchange="generateCourseReport()">
+                    <option value="">Select a course for detailed report</option>
+                </select>
+            </div>
+
+            <div id="courseReportSection" style="display: none;">
+                <h3>Course Performance Report</h3>
+                <div class="table-container">
+                    <table id="reportTable">
+                        <thead>
+                            <tr>
+                                <th>Student Name</th>
+                                <th>Student ID</th>
+                                <th>Prelim</th>
+                                <th>Midterm</th>
+                                <th>Final</th>
+                                <th>Final Grade</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportTableBody">
+                            <!-- Report data will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Processing...</p>
+        </div>
+
+        <div id="alertContainer"></div>
+    </div>
+
+    <script>
+        // Simulated database - In real implementation, this would be handled by PHP/MySQL
+        let database = {
+            courses: JSON.parse(localStorage.getItem('courses') || '[]'),
+            students: JSON.parse(localStorage.getItem('students') || '[]'),
+            grades: JSON.parse(localStorage.getItem('grades') || '[]')
+        };
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCourses();
+            loadStudents();
+            loadGrades();
+            populateCourseDropdowns();
+            updateStats();
+        });
+
+        // Tab management
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+
+            // Refresh data when switching tabs
+            if (tabName === 'reports') {
+                updateStats();
+            }
+        }
+
+        // Course management functions
+        function addCourse() {
+            const name = document.getElementById('courseName').value.trim();
+            const section = document.getElementById('courseSection').value.trim();
+            const credits = parseInt(document.getElementById('courseCredits').value);
+
+            if (!name || !section || !credits) {
+                showAlert('Please fill in all course fields', 'error');
+                return;
+            }
+
+            // Check for duplicate course-section combination
+            const exists = database.courses.find(c => 
+                c.name.toLowerCase() === name.toLowerCase() && 
+                c.section.toLowerCase() === section.toLowerCase()
+            );
+
+            if (exists) {
+                showAlert('Course with this section already exists', 'error');
+                return;
+            }
+
+            const course = {
+                id: Date.now(),
+                name: name,
+                section: section,
+                credits: credits,
+                createdAt: new Date().toISOString()
+            };
+
+            database.courses.push(course);
+            saveToStorage('courses');
+            
+            // Clear form
+            document.getElementById('courseName').value = '';
+            document.getElementById('courseSection').value = '';
+            document.getElementById('courseCredits').value = '';
+
+            loadCourses();
+            populateCourseDropdowns();
+            showAlert('Course added successfully!', 'success');
+        }
+
+        function loadCourses() {
+            const tbody = document.getElementById('coursesTableBody');
+            tbody.innerHTML = '';
+
+            database.courses.forEach(course => {
+                const studentCount = database.students.filter(s => s.courseId === course.id).length;
+                const row = `
+                    <tr>
+                        <td>${course.name}</td>
+                        <td>${course.section}</td>
+                        <td>${course.credits}</td>
+                        <td>${studentCount}</td>
+                        <td>
+                            <button class="btn btn-danger" onclick="deleteCourse(${course.id})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function deleteCourse(courseId) {
+            if (confirm('Are you sure you want to delete this course? All associated students and grades will be removed.')) {
+                // Remove course
+                database.courses = database.courses.filter(c => c.id !== courseId);
+                
+                // Remove associated students and grades
+                database.students = database.students.filter(s => s.courseId !== courseId);
+                database.grades = database.grades.filter(g => {
+                    const student = database.students.find(s => s.id === g.studentId);
+                    return student && student.courseId !== courseId;
+                });
+
+                saveToStorage('courses');
+                saveToStorage('students');
+                saveToStorage('grades');
+
+                loadCourses();
+                loadStudents();
+                populateCourseDropdowns();
+                showAlert('Course deleted successfully', 'success');
+            }
+        }
+
+        // Student management functions
+        function addStudent() {
+            const name = document.getElementById('studentName').value.trim();
+            const studentId = document.getElementById('studentId').value.trim();
+            const courseId = parseInt(document.getElementById('studentCourse').value);
+
+            if (!name || !studentId || !courseId) {
+                showAlert('Please fill in all student fields', 'error');
+                return;
+            }
+
+            // Check for duplicate student ID
+            const exists = database.students.find(s => s.studentId === studentId);
+            if (exists) {
+                showAlert('Student ID already exists', 'error');
+                return;
+            }
+
+            const student = {
+                id: Date.now(),
+                name: name,
+                studentId: studentId,
+                courseId: courseId,
+                createdAt: new Date().toISOString()
+            };
+
+            database.students.push(student);
+            saveToStorage('students');
+
+            // Clear form
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentId').value = '';
+            document.getElementById('studentCourse').value = '';
+
+            loadStudents();
+            showAlert('Student added successfully!', 'success');
+        }
+
+        function loadStudents() {
+            const tbody = document.getElementById('studentsTableBody');
+            tbody.innerHTML = '';
+
+            const filterCourseId = document.getElementById('filterCourse')?.value;
+
+            database.students.forEach(student => {
+                const course = database.courses.find(c => c.id === student.courseId);
+                if (!course) return;
+
+                // Apply filter if selected
+                if (filterCourseId && student.courseId !== parseInt(filterCourseId)) {
+                    return;
+                }
+
+                const row = `
+                    <tr>
+                        <td>${student.name}</td>
+                        <td>${student.studentId}</td>
+                        <td>${course.name}</td>
+                        <td>${course.section}</td>
+                        <td>
+                            <button class="btn btn-danger" onclick="deleteStudent(${student.id})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function deleteStudent(studentId) {
+            if (confirm('Are you sure you want to delete this student?')) {
+                database.students = database.students.filter(s => s.id !== studentId);
+                database.grades = database.grades.filter(g => g.studentId !== studentId);
+                
+                saveToStorage('students');
+                saveToStorage('grades');
+                
+                loadStudents();
+                showAlert('Student deleted successfully', 'success');
+            }
+        }
+
+        function filterStudents() {
+            loadStudents();
+        }
+
+        // Grade management functions
+        function loadStudentsForGrading() {
+            const courseId = parseInt(document.getElementById('gradeCourse').value);
+            if (!courseId) {
+                document.getElementById('gradingSection').style.display = 'none';
+                return;
+            }
+
+            const course = database.courses.find(c => c.id === courseId);
+            const students = database.students.filter(s => s.courseId === courseId);
+
+            if (students.length === 0) {
+                showAlert('No students found for this course', 'error');
+                document.getElementById('gradingSection').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('gradingSection').style.display = 'block';
+            const tbody = document.getElementById('gradesTableBody');
+            tbody.innerHTML = '';
+
+            students.forEach(student => {
+                const grade = database.grades.find(g => g.studentId === student.id) || {
+                    prelim: '',
+                    midterm: '',
+                    final: '',
+                    finalGrade: '',
+                    status: ''
+                };
+
+                const row = `
+                    <tr>
+                        <td>${student.name}</td>
+                        <td>${student.studentId}</td>
+                        <td><input type="number" class="grade-input" min="0" max="100" value="${grade.prelim}" 
+                            onchange="calculateFinalGrade(${student.id})" id="prelim_${student.id}"></td>
+                        <td><input type="number" class="grade-input" min="0" max="100" value="${grade.midterm}" 
+                            onchange="calculateFinalGrade(${student.id})" id="midterm_${student.id}"></td>
+                        <td><input type="number" class="grade-input" min="0" max="100" value="${grade.final}" 
+                            onchange="calculateFinalGrade(${student.id})" id="final_${student.id}"></td>
+                        <td id="finalGrade_${student.id}">${grade.finalGrade}</td>
+                        <td id="status_${student.id}">${grade.status}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function calculateFinalGrade(studentId) {
+            const prelim = parseFloat(document.getElementById(`prelim_${studentId}`).value) || 0;
+            const midterm = parseFloat(document.getElementById(`midterm_${studentId}`).value) || 0;
+            const final = parseFloat(document.getElementById(`final_${studentId}`).value) || 0;
+
+            // Calculate final grade (30% prelim, 30% midterm, 40% final)
+            const finalGrade = (prelim * 0.3) + (midterm * 0.3) + (final * 0.4);
+            const status = finalGrade >= 75 ? 'PASSED' : 'FAILED';
+
+            document.getElementById(`finalGrade_${studentId}`).textContent = finalGrade.toFixed(2);
+            document.getElementById(`status_${studentId}`).textContent = status;
+        }
+
+        function saveAllGrades() {
+            const courseId = parseInt(document.getElementById('gradeCourse').value);
+            const students = database.students.filter(s => s.courseId === courseId);
+
+            students.forEach(student => {
+                const prelim = parseFloat(document.getElementById(`prelim_${student.id}`).value) || 0;
+                const midterm = parseFloat(document.getElementById(`midterm_${student.id}`).value) || 0;
+                const final = parseFloat(document.getElementById(`final_${student.id}`).value) || 0;
+                const finalGrade = (prelim * 0.3) + (midterm * 0.3) + (final * 0.4);
+                const status = finalGrade >= 75 ? 'PASSED' : 'FAILED';
+
+                // Remove existing grade if exists
+                database.grades = database.grades.filter(g => g.studentId !== student.id);
+
+                // Add new grade
+                database.grades.push({
+                    id: Date.now() + student.id,
+                    studentId: student.id,
+                    prelim: prelim,
+                    midterm: midterm,
+                    final: final,
+                    finalGrade: finalGrade.toFixed(2),
+                    status: status,
+                    updatedAt: new Date().toISOString()
+                });
+            });
+
+            saveToStorage('grades');
+            showAlert('All grades saved successfully!', 'success');
+        }
+
+        // Report functions
+        function updateStats() {
+            document.getElementById('totalCourses').textContent = database.courses.length;
+            document.getElementById('totalStudents').textContent = database.students.length;
+
+            if (database.grades.length > 0) {
+                const totalGrades = database.grades.reduce((sum, grade) => sum + parseFloat(grade.finalGrade), 0);
+                const averageGrade = totalGrades / database.grades.length;
+                document.getElementById('averageGrade').textContent = averageGrade.toFixed(2);
+
+                const passedCount = database.grades.filter(grade => grade.status === 'PASSED').length;
+                const passRate = (passedCount / database.grades.length) * 100;
+                document.getElementById('passRate').textContent = passRate.toFixed(1) + '%';
+            } else {
+                document.getElementById('averageGrade').textContent = '0.00';
+                document.getElementById('passRate').textContent = '0%';
+            }
+        }
+
+        function generateCourseReport() {
+            const courseId = parseInt(document.getElementById('reportCourse').value);
+            if (!courseId) {
+                document.getElementById('courseReportSection').style.display = 'none';
+                return;
+            }
+
+            const students = database.students.filter(s => s.courseId === courseId);
+            document.getElementById('courseReportSection').style.display = 'block';
+            
+            const tbody = document.getElementById('reportTableBody');
+            tbody.innerHTML = '';
+
+            students.forEach(student => {
+                const grade = database.grades.find(g => g.studentId === student.id);
+                if (grade) {
+                    const row = `
+                        <tr>
+                            <td>${student.name}</td>
+                            <td>${student.studentId}</td>
+                            <td>${grade.prelim}</td>
+                            <td>${grade.midterm}</td>
+                            <td>${grade.final}</td>
+                            <td>${grade.finalGrade}</td>
+                            <td style="color: ${grade.status === 'PASSED' ? 'green' : 'red'}; font-weight: bold;">
+                                ${grade.status}
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                }
+            });
+        }
+
+        // Utility functions
+        function populateCourseDropdowns() {
+            const dropdowns = ['studentCourse', 'filterCourse', 'gradeCourse', 'reportCourse'];
+            
+            dropdowns.forEach(dropdownId => {
+                const dropdown = document.getElementById(dropdownId);
+                if (!dropdown) return;
+                
+                // Save current value
+                const currentValue = dropdown.value;
+                
+                // Clear and repopulate
+                const placeholder = dropdown.children[0];
+                dropdown.innerHTML = '';
+                dropdown.appendChild(placeholder);
+                
+                database.courses.forEach(course => {
+                    const option = document.createElement('option');
+                    option.value = course.id;
+                    option.textContent = `${course.name} - Section ${course.section}`;
+                    dropdown.appendChild(option);
+                });
+                
+                // Restore value if it still exists
+                dropdown.value = currentValue;
+            });
+        }
+
+        function saveToStorage(key) {
+            localStorage.setItem(key, JSON.stringify(database[key]));
+        }
+
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
+            
+            const alert = document.createElement('div');
+            alert.className = `alert ${alertClass}`;
+            alert.textContent = message;
+            
+            alertContainer.appendChild(alert);
+            
+            // Remove alert after 5 seconds
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        // Simulate AJAX requests for mobile app compatibility
+        function ajaxRequest(endpoint, method, data, callback) {
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            
+            // Simulate network delay
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+                
+                // In real implementation, this would make actual HTTP requests
+                // to PHP endpoints that interact with MySQL database
+                
+                let response;
+                switch(endpoint) {
+                    case 'get_courses':
+                        response = { success: true, data: database.courses };
+                        break;
+                    case 'add_course':
+                        response = { success: true, message: 'Course added successfully' };
+                        break;
+                    case 'get_students':
+                        response = { success: true, data: database.students };
+                        break;
+                    case 'add_student':
+                        response = { success: true, message: 'Student added successfully' };
+                        break;
+                    case 'get_grades':
+                        response = { success: true, data: database.grades };
+                        break;
+                    case 'save_grades':
+                        response = { success: true, message: 'Grades saved successfully' };
+                        break;
+                    default:
+                        response = { success: false, message: 'Unknown endpoint' };
+                }
+                
+                if (callback) callback(response);
+            }, 500);
+        }
+
+        // Mobile-responsive touch events
+        if ('ontouchstart' in window) {
+            document.addEventListener('touchstart', function() {
+                // Handle touch events for mobile
+            });
+        }
+
+        // PWA support
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').then(function(registration) {
+                    console.log('ServiceWorker registration successful');
+                }, function(err) {
+                    console.log('ServiceWorker registration failed');
+                });
+            });
+        }
+    </script>
+</body>
+</html>
+                

@@ -73,6 +73,7 @@ if (!isset($_SESSION['user_id'])) {
                 <div class="button-group">
                     <button class="search-btn" onclick="filterCourses()">Search</button>
                     <button class="add-btn" onclick="openAddCourseModal()">Add Course</button>
+                    <button class="btn-secondary" onclick="window.location.href='dashboard.php'">Back to Dashboard</button>
                 </div>
             </div>
         </div>

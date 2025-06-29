@@ -53,6 +53,7 @@ if (!isset($_SESSION['user_id'])) {
         <div class="button-group">
             <button class="btn btn-primary">Review Grading Sheet</button>
             <button class="btn btn-secondary" onclick="goBackToCourseSelection()">Back</button>
+            <button class="btn btn-success" onclick="openAddStudentModal()">Add Student</button>
         </div>
 
         <div class="status-section">
@@ -214,7 +215,7 @@ if (!isset($_SESSION['user_id'])) {
 
         // Function to go back to course selection
         function goBackToCourseSelection() {
-            window.location.href = 'course_selection.html';
+            window.location.href = 'course_selection.php';
         }
 
         // Function to handle logout
@@ -314,8 +315,6 @@ if (!isset($_SESSION['user_id'])) {
             loadCourseInfo();
         });
     </script>
-</body>
-</html>
 
 <!-- Add these modal elements before the closing body tag -->
 <div id="studentModal" class="modal">
@@ -325,7 +324,7 @@ if (!isset($_SESSION['user_id'])) {
             <input type="hidden" id="editMode" value="add">
             <div class="form-group">
                 <label for="studentNumber">Student Number:</label>
-                <input type="text" id="studentNumber" required pattern="\d{4}-\d{5}-[A-Z]{2}-\d{1}">
+                <input type="text" id="studentNumber" required>
             </div>
             <div class="form-group">
                 <label for="studentName">Full Name:</label>
@@ -402,14 +401,42 @@ if (!isset($_SESSION['user_id'])) {
         const studentNumber = document.getElementById('studentNumber').value;
         const studentName = document.getElementById('studentName').value;
         const editMode = document.getElementById('editMode').value;
+        const courseId = getUrlParameter('id');
 
-        if (editMode === 'add') {
-            addStudentToTable(studentNumber, studentName);
-        } else {
-            updateStudentInTable(studentNumber, studentName);
-        }
+        // Show saving indicator
+        showSaveIndicator();
 
-        closeStudentModal();
+        // Save to database
+        fetch('grades_api.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                course_id: courseId,
+                student_number: studentNumber,
+                full_name: studentName
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (editMode === 'add') {
+                    addStudentToTable(studentNumber, studentName);
+                } else {
+                    updateStudentInTable(studentNumber, studentName);
+                }
+                closeStudentModal();
+                hideSaveIndicator();
+            } else {
+                alert('Error saving student: ' + data.message);
+                hideSaveIndicator();
+            }
+        })
+        .catch(error => {
+            alert('Error saving student: ' + error.message);
+            hideSaveIndicator();
+        });
     }
 
     function addStudentToTable(studentNumber, studentName) {

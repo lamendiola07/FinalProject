@@ -42,6 +42,10 @@ switch ($method) {
         }
         
         try {
+            // Start transaction
+            $pdo->beginTransaction();
+            
+            // Insert the course
             $stmt = $pdo->prepare("INSERT INTO courses (code, subject, section_code, schedule, school_year, semester, faculty_id) 
                                  VALUES (?, ?, ?, ?, ?, ?, ?)");
             $stmt->execute([
@@ -56,9 +60,41 @@ switch ($method) {
             
             $courseId = $pdo->lastInsertId();
             
+            // Add students to the course based on section and course code
+            // This query gets students from the database who match the course code and section
+            $stmt = $pdo->prepare("SELECT * FROM students WHERE course_code = ? AND section_code = ?");
+            $stmt->execute([$data['code'], $data['sectionCode']]);
+            $students = $stmt->fetchAll();
+            
+            $enrolledCount = 0;
+            
+            // Enroll each matching student in the course
+            foreach ($students as $student) {
+                // Enroll student in the course
+                $stmt = $pdo->prepare("INSERT INTO course_students (course_id, student_id) VALUES (?, ?)");
+                $stmt->execute([$courseId, $student['id']]);
+                
+                // Create empty grade record
+                $stmt = $pdo->prepare("INSERT INTO grades (course_student_id) 
+                                     SELECT id FROM course_students WHERE course_id = ? AND student_id = ?");
+                $stmt->execute([$courseId, $student['id']]);
+                
+                $enrolledCount++;
+            }
+            
+            // Commit transaction
+            $pdo->commit();
+            
             header('Content-Type: application/json');
-            echo json_encode(['success' => true, 'message' => 'Course added successfully', 'id' => $courseId]);
+            echo json_encode([
+                'success' => true, 
+                'message' => 'Course added successfully. ' . $enrolledCount . ' students enrolled.', 
+                'id' => $courseId
+            ]);
         } catch(PDOException $e) {
+            // Rollback transaction on error
+            $pdo->rollBack();
+            
             header('Content-Type: application/json');
             echo json_encode(['success' => false, 'message' => 'Error adding course: ' . $e->getMessage()]);
         }

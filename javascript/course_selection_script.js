@@ -211,7 +211,7 @@ async function addCourse(event) {
             closeAddCourseModal();
             
             // Show success message
-            showSuccessMessage(`Course "${courseCode} - ${courseSectionCode}" added successfully!`);
+            showSuccessMessage(data.message);
             
             // Reload courses
             loadCourses();

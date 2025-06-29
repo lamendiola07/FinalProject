@@ -16,11 +16,13 @@ try {
         UNIQUE KEY unique_course (code, section_code, school_year, semester, faculty_id)
     );");
     
-    // Create students table
+    // Create students table with course_code and section_code fields
     $pdo->exec("CREATE TABLE IF NOT EXISTS students (
         id INT AUTO_INCREMENT PRIMARY KEY,
         student_number VARCHAR(50) NOT NULL,
         full_name VARCHAR(255) NOT NULL,
+        course_code VARCHAR(20) NULL,
+        section_code VARCHAR(20) NULL,
         UNIQUE KEY unique_student (student_number)
     );");
     

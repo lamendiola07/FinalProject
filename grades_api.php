@@ -91,8 +91,14 @@ switch ($method) {
                     exit;
                 }
                 
-                $stmt = $pdo->prepare("INSERT INTO students (student_number, full_name) VALUES (?, ?)");
-                $stmt->execute([$data['student_number'], $data['full_name']]);
+                // Include course_code and section_code if provided
+                if (isset($data['course_code']) && isset($data['section_code'])) {
+                    $stmt = $pdo->prepare("INSERT INTO students (student_number, full_name, course_code, section_code) VALUES (?, ?, ?, ?)");
+                    $stmt->execute([$data['student_number'], $data['full_name'], $data['course_code'], $data['section_code']]);
+                } else {
+                    $stmt = $pdo->prepare("INSERT INTO students (student_number, full_name) VALUES (?, ?)");
+                    $stmt->execute([$data['student_number'], $data['full_name']]);
+                }
                 $student_id = $pdo->lastInsertId();
             } else {
                 $student_id = $student['id'];

@@ -53,7 +53,7 @@ if (!isset($_SESSION['user_id'])) {
         <div class="button-group">
             <button class="btn btn-primary">Review Grading Sheet</button>
             <button class="btn btn-secondary" onclick="goBackToCourseSelection()">Back</button>
-            <button class="btn btn-success" onclick="openAddStudentModal()">Add Student</button>
+            <!-- Removed Add Student and Refresh Students buttons as requested -->
         </div>
 
         <div class="status-section">
@@ -402,10 +402,10 @@ if (!isset($_SESSION['user_id'])) {
         const studentName = document.getElementById('studentName').value;
         const editMode = document.getElementById('editMode').value;
         const courseId = getUrlParameter('id');
-
+    
         // Show saving indicator
         showSaveIndicator();
-
+    
         // Save to database
         fetch('grades_api.php', {
             method: 'POST',
@@ -415,7 +415,10 @@ if (!isset($_SESSION['user_id'])) {
             body: JSON.stringify({
                 course_id: courseId,
                 student_number: studentNumber,
-                full_name: studentName
+                full_name: studentName,
+                first_grade: null,  // Add this to satisfy API requirements
+                second_grade: null   // Add this to satisfy API requirements
+                // Removed course_code and section_code to avoid SQL errors
             })
         })
         .then(response => response.json())
@@ -443,7 +446,8 @@ if (!isset($_SESSION['user_id'])) {
         const tbody = document.getElementById('studentsTableBody');
         const newRow = document.createElement('tr');
         newRow.className = 'student-row';
-        newRow.dataset.studentId = studentNumber;
+        newRow.dataset.student = studentNumber;
+        newRow.dataset.studentId = studentNumber; // Add this for compatibility with edit/delete functions
 
         newRow.innerHTML = `
             <td>${studentNumber}</td>
@@ -480,10 +484,40 @@ if (!isset($_SESSION['user_id'])) {
 
     function deleteStudent(studentNumber) {
         if (confirm('Are you sure you want to delete this student?')) {
-            const row = document.querySelector(`tr[data-student-id="${studentNumber}"]`);
-            if (row) {
-                row.remove();
-            }
+            const courseId = getUrlParameter('id');
+            
+            // Show saving indicator
+            showSaveIndicator();
+            
+            // Delete from database
+            fetch('grades_api.php', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    course_id: courseId,
+                    student_number: studentNumber
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove row from table
+                    const row = document.querySelector(`tr[data-student="${studentNumber}"]`);
+                    if (row) {
+                        row.remove();
+                    }
+                    hideSaveIndicator();
+                } else {
+                    alert('Error deleting student: ' + data.message);
+                    hideSaveIndicator();
+                }
+            })
+            .catch(error => {
+                alert('Error deleting student: ' + error.message);
+                hideSaveIndicator();
+            });
         }
     }
 </script>

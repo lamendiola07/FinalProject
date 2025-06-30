@@ -732,3 +732,187 @@ body {
 .add-student-btn:hover {
     background-color: #45a049;
 }
+
+.academic-reports {
+    background-color: #700000 !important;
+    color: white !important;
+}
+
+.academic-reports:hover {
+    background-color: #8a0000 !important;
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 70px 5px 20px 5px;
+    }
+
+    .header {
+        padding: 5px 10px;
+    }
+
+    .header-left {
+        margin-left: 10px;
+    }
+
+    .user-info {
+        margin-right: 10px;
+    }
+
+    .user-dropdown {
+        min-width: 220px;
+        padding: 12px;
+        right: -10px;
+    }
+
+    .dropdown-header {
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+
+    .dropdown-value {
+        font-size: 13px;
+    }
+
+    .logo-space {
+        width: 35px;
+        height: 35px;
+        margin-right: 8px;
+    }
+
+    .header h1 {
+        font-size: 14px;
+    }
+
+    .user-info {
+        gap: 6px;
+    }
+
+    .user-icon {
+        width: 25px;
+        height: 25px;
+        font-size: 12px;
+    }
+
+    .user-name {
+        font-size: 11px;
+        display: none;
+    }
+
+    .logout-btn {
+        padding: 3px 6px;
+        font-size: 10px;
+    }
+
+    .container {
+        padding: 15px;
+    }
+
+    .container h2 {
+        font-size: 18px;
+        margin-bottom: 15px;
+    }
+
+    .filters {
+        padding: 12px;
+    }
+
+    .courses-table {
+        font-size: 12px;
+    }
+
+    .courses-table th,
+    .courses-table td {
+        padding: 6px;
+    }
+
+    .view-btn {
+        padding: 3px 6px;
+        font-size: 10px;
+    }
+
+    .section-code {
+        font-size: 10px;
+        padding: 1px 4px;
+    }
+
+    .modal-content {
+        width: 98%;
+        margin: 5% auto;
+        padding: 15px;
+    }
+
+    .form-buttons {
+        flex-direction: column;
+    }
+
+    .success-message {
+        right: 5px;
+        left: 5px;
+        padding: 12px 15px;
+        font-size: 14px;
+    }
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+}
+
+.view-btn, .delete-btn {
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.3s ease;
+    min-width: 60px;
+    text-align: center;
+}
+
+.view-btn {
+    background-color: #007bff;
+    color: white;
+}
+
+.view-btn:hover {
+    background-color: #0056b3;
+}
+
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
+
+/* Add Student Modal */
+
+/* Add Student Modal Styles */
+.course-info {
+    margin-bottom: 20px;
+}
+
+.course-info span {
+    font-weight: bold;
+    color: #333;
+}
+
+.add-student-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+    font-size: 14px;
+}
+
+.add-student-btn:hover {
+    background-color: #45a049;
+}

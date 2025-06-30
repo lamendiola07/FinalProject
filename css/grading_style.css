@@ -540,3 +540,13 @@ th {
         font-size: 12px;
     }
 }
+
+/* Add this to your CSS file */
+.btn-academic-reports {
+    background-color: #700000;
+    color: white;
+}
+
+.btn-academic-reports:hover {
+    background-color: #8a0000;
+}

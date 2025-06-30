@@ -59,8 +59,10 @@ switch ($method) {
         // Add or update a grade
         $data = json_decode(file_get_contents('php://input'), true);
         
+        // Change this condition
+        // Change this condition
         if (!isset($data['course_id']) || !isset($data['student_number']) || 
-            (!isset($data['first_grade']) && !isset($data['second_grade']))) {
+            ((!isset($data['first_grade']) && !isset($data['second_grade'])) && !isset($data['full_name']))) {
             header('Content-Type: application/json');
             echo json_encode(['success' => false, 'message' => 'Missing required fields']);
             exit;
@@ -93,8 +95,15 @@ switch ($method) {
                 
                 // Include course_code and section_code if provided
                 if (isset($data['course_code']) && isset($data['section_code'])) {
-                    $stmt = $pdo->prepare("INSERT INTO students (student_number, full_name, course_code, section_code) VALUES (?, ?, ?, ?)");
-                    $stmt->execute([$data['student_number'], $data['full_name'], $data['course_code'], $data['section_code']]);
+                    // Check if these columns exist in the table
+                    try {
+                        $stmt = $pdo->prepare("INSERT INTO students (student_number, full_name, course_code, section_code) VALUES (?, ?, ?, ?)");
+                        $stmt->execute([$data['student_number'], $data['full_name'], $data['course_code'], $data['section_code']]);
+                    } catch(PDOException $e) {
+                        // If column doesn't exist, insert without those columns
+                        $stmt = $pdo->prepare("INSERT INTO students (student_number, full_name) VALUES (?, ?)");
+                        $stmt->execute([$data['student_number'], $data['full_name']]);
+                    }
                 } else {
                     $stmt = $pdo->prepare("INSERT INTO students (student_number, full_name) VALUES (?, ?)");
                     $stmt->execute([$data['student_number'], $data['full_name']]);
@@ -155,6 +164,67 @@ switch ($method) {
         } catch(PDOException $e) {
             header('Content-Type: application/json');
             echo json_encode(['success' => false, 'message' => 'Error updating grade: ' . $e->getMessage()]);
+        }
+        break;
+        
+    case 'DELETE':
+        // Delete a student from a course
+        $data = json_decode(file_get_contents('php://input'), true);
+        
+        // Change this condition
+        if (!isset($data['course_id']) || !isset($data['student_number'])) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Missing required fields']);
+            exit;
+        }
+        
+        try {
+            // First verify the faculty has access to this course
+            $stmt = $pdo->prepare("SELECT * FROM courses WHERE id = ? AND faculty_id = ?");
+            $stmt->execute([$data['course_id'], $faculty_id]);
+            $course = $stmt->fetch();
+            
+            if (!$course) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => 'Course not found or you do not have permission to access it']);
+                exit;
+            }
+            
+            // Get student ID
+            $stmt = $pdo->prepare("SELECT id FROM students WHERE student_number = ?");
+            $stmt->execute([$data['student_number']]);
+            $student = $stmt->fetch();
+            
+            if (!$student) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => 'Student not found']);
+                exit;
+            }
+            
+            // Get course_student relationship
+            $stmt = $pdo->prepare("SELECT id FROM course_students WHERE course_id = ? AND student_id = ?");
+            $stmt->execute([$data['course_id'], $student['id']]);
+            $course_student = $stmt->fetch();
+            
+            if (!$course_student) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => 'Student not enrolled in this course']);
+                exit;
+            }
+            
+            // Delete grades first (foreign key constraint)
+            $stmt = $pdo->prepare("DELETE FROM grades WHERE course_student_id = ?");
+            $stmt->execute([$course_student['id']]);
+            
+            // Delete course_student relationship
+            $stmt = $pdo->prepare("DELETE FROM course_students WHERE id = ?");
+            $stmt->execute([$course_student['id']]);
+            
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true, 'message' => 'Student removed from course successfully']);
+        } catch(PDOException $e) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Error removing student: ' . $e->getMessage()]);
         }
         break;
         

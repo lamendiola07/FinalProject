@@ -41,7 +41,7 @@ if (!isset($_SESSION['user_id'])) {
         <div class="content">
             <div class="navigation-buttons">
                 <button class="btn btn-secondary" onclick="window.location.href='dashboard.php'">Back to Dashboard</button>
-                <button class="btn btn-secondary" onclick="window.location.href='course_selection.php'">Course Selection</button>
+                <button class="btn btn-primary" onclick="window.location.href='course_selection.php'">Course Selection</button>
             </div>
 
             <div class="stats-grid">

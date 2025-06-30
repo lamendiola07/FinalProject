@@ -231,6 +231,22 @@ body {
     align-self: end;
 }
 
+.controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.controls button {
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    min-width: 150px;
+    text-align: center;
+}
+
 .search-btn, .add-btn {
     border: none;
     padding: 10px 20px;
@@ -238,6 +254,8 @@ body {
     cursor: pointer;
     font-size: 14px;
     transition: background-color 0.3s ease;
+    min-width: 120px;
+    text-align: center;
 }
 
 .search-btn {
@@ -733,13 +751,18 @@ body {
     background-color: #45a049;
 }
 
-.academic-reports {
-    background-color: #700000 !important;
+.academic-reports, .btn-academic-reports {
+    background-color: #28a745 !important;
     color: white !important;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
 }
 
-.academic-reports:hover {
-    background-color: #8a0000 !important;
+.academic-reports:hover, .btn-academic-reports:hover {
+    background-color: #218838 !important;
 }
 
 @media (max-width: 480px) {

@@ -76,6 +76,7 @@ if (!isset($_SESSION['user_id'])) {
                     <div class="controls">
                         <button class="btn-secondary" onclick="window.location.href='dashboard.php'">Back to Dashboard</button>
                         <button class="btn-academic-reports" onclick="window.location.href='reports.php'">Academic Reports</button>
+                        <button class="add-student-btn" onclick="alert('Please select a course first to add a student.')">Add Student</button>
                         <!-- Removed duplicate Add Course button -->
                     </div>
                 </div>

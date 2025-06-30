@@ -94,6 +94,7 @@ if (!isset($_SESSION['user_id'])) {
             gap: 15px;
             flex-wrap: wrap;
             align-items: center;
+            justify-content: space-between;
         }
 
         .btn {
@@ -105,6 +106,8 @@ if (!isset($_SESSION['user_id'])) {
             transition: all 0.3s ease;
             text-decoration: none;
             display: inline-block;
+            min-width: 150px;
+            text-align: center;
         }
 
         .btn-primary {
@@ -283,8 +286,8 @@ if (!isset($_SESSION['user_id'])) {
                 <button class="btn btn-primary" onclick="refreshTable()">Refresh Data</button>
                 <button class="btn btn-success" onclick="exportToCSV()">Export to CSV</button>
                 <button class="btn btn-success" onclick="window.location.href='course_selection.php'">Edit Grading Sheet</button>
-                <button class="btn btn-info" onclick="window.location.href='add_students.php'">Manage Students</button>
-                <button class="btn btn-info" onclick="window.location.href='reports.php'">Academic Reports</button>
+                <button class="btn btn-success" onclick="window.location.href='add_students.php'">Manage Students</button>
+                <button class="btn btn-success" onclick="window.location.href='reports.php'">Academic Reports</button>
                 <button class="btn btn-danger" onclick="logout()">Logout</button>
                 <input type="text" class="search-box" id="searchBox" placeholder="Search users..." onkeyup="searchTable()">
             </div>

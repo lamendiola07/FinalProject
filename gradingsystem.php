@@ -52,8 +52,8 @@ if (!isset($_SESSION['user_id'])) {
     <div class="container">
         <div class="button-group">
             <button class="btn btn-primary">Review Grading Sheet</button>
+            <button class="btn btn-primary" onclick="openAddStudentModal()">Add Student</button>
             <button class="btn btn-secondary" onclick="goBackToCourseSelection()">Back</button>
-            <!-- Removed Add Student and Refresh Students buttons as requested -->
         </div>
 
         <div class="status-section">

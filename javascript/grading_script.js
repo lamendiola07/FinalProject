@@ -55,7 +55,7 @@ function handleGradeChange(input) {
 }
 
 // Save grade to the server
-async function saveGrade(input) {
+function saveGrade(input) {
     const studentNumber = input.dataset.student;
     const gradeType = input.dataset.gradeType;
     const value = parseFloat(input.value);
@@ -86,42 +86,48 @@ async function saveGrade(input) {
         }
         
         // Send to server
-        const response = await fetch('grades_api.php', {
+        fetch('grades_api.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data)
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            input.classList.remove('saving', 'error');
-            input.classList.add('saved');
-            
-            // Update computed grade if available
-            if (result.computed_grade !== null) {
-                const computedRatingCell = document.querySelector(`.computed-rating[data-student="${studentNumber}"]`);
-                const finalRatingCell = document.querySelector(`.final-rating[data-student="${studentNumber}"]`);
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                input.classList.remove('saving', 'error');
+                input.classList.add('saved');
                 
-                if (computedRatingCell) {
-                    computedRatingCell.textContent = result.computed_grade.toFixed(2);
+                // Update computed grade if available
+                if (result.computed_grade !== null) {
+                    const computedRatingCell = document.querySelector(`.computed-rating[data-student="${studentNumber}"]`);
+                    const finalRatingCell = document.querySelector(`.final-rating[data-student="${studentNumber}"]`);
+                    
+                    if (computedRatingCell) {
+                        computedRatingCell.textContent = result.computed_grade.toFixed(2);
+                    }
+                    
+                    if (finalRatingCell) {
+                        finalRatingCell.textContent = result.computed_grade.toFixed(2);
+                    }
                 }
                 
-                if (finalRatingCell) {
-                    finalRatingCell.textContent = result.computed_grade.toFixed(2);
-                }
+                // Hide saving indicator after a short delay
+                setTimeout(hideSaveIndicator, 500);
+            } else {
+                input.classList.remove('saving', 'saved');
+                input.classList.add('error');
+                alert('Error saving grade: ' + result.message);
+                hideSaveIndicator();
             }
-            
-            // Hide saving indicator after a short delay
-            setTimeout(hideSaveIndicator, 500);
-        } else {
+        })
+        .catch(error => {
             input.classList.remove('saving', 'saved');
             input.classList.add('error');
-            alert('Error saving grade: ' + result.message);
+            alert('Error saving grade: ' + error.message);
             hideSaveIndicator();
-        }
+        });
     } catch (error) {
         input.classList.remove('saving', 'saved');
         input.classList.add('error');
@@ -143,19 +149,27 @@ function getStudentName(studentNumber) {
 // Function to load students and grades for the current course
 async function loadStudentsAndGrades() {
     try {
-        const response = await fetch(`grades_api.php?course_id=${courseId}`);
+        console.log('Loading students with course ID:', courseId);
+        const url = `grades_api.php?course_id=${courseId}`;
+        console.log('API URL:', url);
+        
+        const response = await fetch(url);
+        console.log('Response status:', response.status);
+        
         const data = await response.json();
+        console.log('API response:', data);
         
         if (data.success) {
-            // Update course info if needed
-            // (This is already handled by URL parameters, but could be enhanced)
-            
+            console.log('Number of students returned:', data.students ? data.students.length : 0);
+            console.log('Course data:', data.course);
             // Populate student table
             populateStudentTable(data.students);
         } else {
+            console.error('Error loading students:', data.message);
             alert('Error loading students: ' + data.message);
         }
     } catch (error) {
+        console.error('Error loading students:', error);
         alert('Error loading students: ' + error.message);
     }
 }
@@ -247,6 +261,8 @@ function loadCourseInfo() {
     const schoolYear = getUrlParameter('schoolYear');
     const semester = getUrlParameter('semester');
 
+    console.log('Course ID from URL:', courseId);
+
     // Update the page with course information if parameters exist
     if (courseCode && courseTitle) {
         document.getElementById('subjectInfo').textContent = `${courseCode}: ${courseTitle}`;
@@ -266,7 +282,10 @@ function loadCourseInfo() {
     
     // If we have a course ID, load students and grades
     if (courseId) {
+        console.log('Loading students for course ID:', courseId);
         loadStudentsAndGrades();
+    } else {
+        console.error('No course ID found in URL parameters');
     }
 }
 

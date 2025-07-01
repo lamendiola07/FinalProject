@@ -6,6 +6,9 @@ if (!isset($_SESSION['user_id'])) {
     header('Location: index.html');
     exit;
 }
+
+// Debug session information
+error_log("Session data in gradingsystem.php: " . json_encode($_SESSION));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,6 +17,7 @@ if (!isset($_SESSION['user_id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Grading Sheet</title>
     <link rel="stylesheet" href="css/grading_style.css">
+    <script src="javascript/grading_script.js"></script>
 </head>
 <body>
     <div class="header">
@@ -111,68 +115,7 @@ if (!isset($_SESSION['user_id'])) {
                     </tr>
                 </thead>
                 <tbody id="studentsTableBody">
-                    <tr class="student-row">
-                        <td>2023-10177-MN-1</td>
-                        <td>GALATICO, REI ANTHONY LONOY</td>
-                        <td>
-                            <input type="number" 
-                                   class="grade-input" 
-                                   placeholder="0.00"
-                                   min="1.00" 
-                                   max="5.00" 
-                                   step="0.01"
-                                   data-student="2023-10177-MN-1"
-                                   data-grade-type="first"
-                                   onchange="handleGradeChange(this)"
-                                   oninput="handleGradeInput(this)">
-                        </td>
-                        <td>
-                            <input type="number" 
-                                   class="grade-input" 
-                                   placeholder="0.00"
-                                   min="1.00" 
-                                   max="5.00" 
-                                   step="0.01"
-                                   data-student="2023-10177-MN-1"
-                                   data-grade-type="second"
-                                   onchange="handleGradeChange(this)"
-                                   oninput="handleGradeInput(this)">
-                        </td>
-                        <td class="computed-rating" data-student="2023-10177-MN-1"></td>
-                        <td class="final-rating" data-student="2023-10177-MN-1"></td>
-                        <td></td>
-                    </tr>
-                    <tr class="student-row">
-                        <td>2023-10178-MN-2</td>
-                        <td>SAMPLE STUDENT NAME</td>
-                        <td>
-                            <input type="number" 
-                                   class="grade-input" 
-                                   placeholder="0.00"
-                                   min="1.00" 
-                                   max="5.00" 
-                                   step="0.01"
-                                   data-student="2023-10178-MN-2"
-                                   data-grade-type="first"
-                                   onchange="handleGradeChange(this)"
-                                   oninput="handleGradeInput(this)">
-                        </td>
-                        <td>
-                            <input type="number" 
-                                   class="grade-input" 
-                                   placeholder="0.00"
-                                   min="1.00" 
-                                   max="5.00" 
-                                   step="0.01"
-                                   data-student="2023-10178-MN-2"
-                                   data-grade-type="second"
-                                   onchange="handleGradeChange(this)"
-                                   oninput="handleGradeInput(this)">
-                        </td>
-                        <td class="computed-rating" data-student="2023-10178-MN-2"></td>
-                        <td class="final-rating" data-student="2023-10178-MN-2"></td>
-                        <td></td>
-                    </tr>
+                    <!-- Students will be loaded dynamically from the database -->
                 </tbody>
             </table>
         </div>
@@ -317,7 +260,7 @@ if (!isset($_SESSION['user_id'])) {
     </script>
 
 <!-- Add these modal elements before the closing body tag -->
-<div id="studentModal" class="modal">
+<div id="studentModal" class="modal" style="display: none;">
     <div class="modal-content">
         <h2 id="studentModalTitle">Add Student</h2>
         <form id="studentForm" onsubmit="handleStudentSubmit(event)">
@@ -403,6 +346,9 @@ if (!isset($_SESSION['user_id'])) {
         const editMode = document.getElementById('editMode').value;
         const courseId = getUrlParameter('id');
     
+        // Debug information
+        console.log('Submitting student with course ID:', courseId);
+    
         // Show saving indicator
         showSaveIndicator();
     
@@ -417,8 +363,9 @@ if (!isset($_SESSION['user_id'])) {
                 student_number: studentNumber,
                 full_name: studentName,
                 first_grade: null,  // Add this to satisfy API requirements
-                second_grade: null   // Add this to satisfy API requirements
-                // Removed course_code and section_code to avoid SQL errors
+                second_grade: null,  // Add this to satisfy API requirements
+                course_code: getUrlParameter('code'),
+                section_code: getUrlParameter('section')
             })
         })
         .then(response => response.json())
@@ -431,6 +378,9 @@ if (!isset($_SESSION['user_id'])) {
                 }
                 closeStudentModal();
                 hideSaveIndicator();
+                
+                // Reload students and grades to ensure data is displayed correctly
+                loadStudentsAndGrades();
             } else {
                 alert('Error saving student: ' + data.message);
                 hideSaveIndicator();

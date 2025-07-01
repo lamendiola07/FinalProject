@@ -61,25 +61,30 @@ switch ($method) {
             $courseId = $pdo->lastInsertId();
             
             // Add students to the course based on section and course code
-            // This query gets students from the database who match the course code and section
-            $stmt = $pdo->prepare("SELECT * FROM students WHERE course_code = ? AND section_code = ?");
-            $stmt->execute([$data['code'], $data['sectionCode']]);
-            $students = $stmt->fetchAll();
-            
-            $enrolledCount = 0;
-            
-            // Enroll each matching student in the course
-            foreach ($students as $student) {
-                // Enroll student in the course
-                $stmt = $pdo->prepare("INSERT INTO course_students (course_id, student_id) VALUES (?, ?)");
-                $stmt->execute([$courseId, $student['id']]);
+            try {
+                // This query gets students from the database who match the course code and section
+                $stmt = $pdo->prepare("SELECT * FROM students WHERE course_code = ? AND section_code = ?");
+                $stmt->execute([$data['code'], $data['sectionCode']]);
+                $students = $stmt->fetchAll();
                 
-                // Create empty grade record
-                $stmt = $pdo->prepare("INSERT INTO grades (course_student_id) 
-                                     SELECT id FROM course_students WHERE course_id = ? AND student_id = ?");
-                $stmt->execute([$courseId, $student['id']]);
+                $enrolledCount = 0;
                 
-                $enrolledCount++;
+                // Enroll each matching student in the course
+                foreach ($students as $student) {
+                    // Enroll student in the course
+                    $stmt = $pdo->prepare("INSERT INTO course_students (course_id, student_id) VALUES (?, ?)");
+                    $stmt->execute([$courseId, $student['id']]);
+                    
+                    // Create empty grade record
+                    $stmt = $pdo->prepare("INSERT INTO grades (course_student_id) 
+                                             SELECT id FROM course_students WHERE course_id = ? AND student_id = ?");
+                    $stmt->execute([$courseId, $student['id']]);
+                    
+                    $enrolledCount++;
+                }
+            } catch(PDOException $e) {
+                // If the query fails (e.g., columns don't exist), just continue without enrolling students
+                $enrolledCount = 0;
             }
             
             // Commit transaction

@@ -13,6 +13,10 @@ try {
     die("Connection failed: " . $e->getMessage());
 }
 
+// Improve session handling
+ini_set('session.cookie_lifetime', 86400); // 1 day
+ini_set('session.gc_maxlifetime', 86400); // 1 day
+
 // Start session if not already started
 if (session_status() == PHP_SESSION_NONE) {
     session_start();

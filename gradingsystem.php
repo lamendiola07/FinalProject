@@ -57,7 +57,7 @@ error_log("Session data in gradingsystem.php: " . json_encode($_SESSION));
         <div class="button-group">
             <button class="btn btn-primary">Review Grading Sheet</button>
             <button class="btn btn-primary" onclick="openAddStudentModal()">Add Student</button>
-            <button class="btn btn-secondary" onclick="goBackToCourseSelection()">Back</button>
+            <button class="btn btn-secondary" onclick="window.location.href='course_selection.php'">Back</button>
         </div>
 
         <div class="status-section">
@@ -132,12 +132,15 @@ error_log("Session data in gradingsystem.php: " . json_encode($_SESSION));
 
         // Load course information from URL parameters
         function loadCourseInfo() {
+            courseId = getUrlParameter('id'); // Make sure courseId is set globally
             const courseCode = getUrlParameter('code');
             const courseTitle = getUrlParameter('title');
             const sectionCode = getUrlParameter('section');
             const schedule = getUrlParameter('schedule');
             const schoolYear = getUrlParameter('schoolYear');
             const semester = getUrlParameter('semester');
+
+            console.log('Course ID from URL:', courseId);
 
             if (courseCode && courseTitle) {
                 document.getElementById('subjectInfo').textContent = `${courseCode}: ${courseTitle}`;
@@ -154,103 +157,14 @@ error_log("Session data in gradingsystem.php: " . json_encode($_SESSION));
             if (semester) {
                 document.getElementById('semesterInfo').textContent = semester;
             }
-        }
-
-        // Function to go back to course selection
-        function goBackToCourseSelection() {
-            window.location.href = 'course_selection.php';
-        }
-
-        // Function to handle logout
-        function logout() {
-            fetch('auth_handler.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    action: 'logout'
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.href = 'index.html';
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        }
-
-        // Function to toggle user dropdown
-        function toggleUserDropdown() {
-            const dropdown = document.getElementById('userDropdown');
-            dropdown.classList.toggle('active');
-        }
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.user-info')) {
-                document.getElementById('userDropdown').classList.remove('active');
-            }
-        });
-
-        // Grade handling functions
-        function handleGradeInput(input) {
-            const value = parseFloat(input.value);
-            if (value < 1.00 || value > 5.00) {
-                input.style.borderColor = '#dc3545';
+            
+            // If we have a course ID, load students and grades
+            if (courseId) {
+                console.log('Loading students for course ID:', courseId);
+                loadStudentsAndGrades();
             } else {
-                input.style.borderColor = '#28a745';
+                console.error('No course ID found in URL parameters');
             }
-        }
-
-        function handleGradeChange(input) {
-            const studentId = input.dataset.student;
-            const gradeType = input.dataset.gradeType;
-            const value = parseFloat(input.value);
-
-            if (value < 1.00 || value > 5.00) {
-                alert('Grade must be between 1.00 and 5.00');
-                input.focus();
-                return;
-            }
-
-            showSaveIndicator();
-            calculateRatings(studentId);
-            setTimeout(hideSaveIndicator, 1000);
-        }
-
-        function calculateRatings(studentId) {
-            const firstGradeInput = document.querySelector(`input[data-student="${studentId}"][data-grade-type="first"]`);
-            const secondGradeInput = document.querySelector(`input[data-student="${studentId}"][data-grade-type="second"]`);
-            const computedRatingCell = document.querySelector(`.computed-rating[data-student="${studentId}"]`);
-            const finalRatingCell = document.querySelector(`.final-rating[data-student="${studentId}"]`);
-
-            const firstGrade = parseFloat(firstGradeInput.value) || 0;
-            const secondGrade = parseFloat(secondGradeInput.value) || 0;
-
-            if (firstGrade > 0 && secondGrade > 0) {
-                const computedRating = ((firstGrade + secondGrade) / 2).toFixed(2);
-                computedRatingCell.textContent = computedRating;
-                finalRatingCell.textContent = computedRating;
-            } else {
-                computedRatingCell.textContent = '';
-                finalRatingCell.textContent = '';
-            }
-        }
-
-        function showSaveIndicator() {
-            const indicator = document.getElementById('saveIndicator');
-            indicator.style.display = 'block';
-            indicator.style.opacity = '1';
-        }
-
-        function hideSaveIndicator() {
-            const indicator = document.getElementById('saveIndicator');
-            indicator.style.opacity = '0';
-            setTimeout(() => {
-                indicator.style.display = 'none';
-            }, 300);
         }
 
         // Initialize page
@@ -371,11 +285,6 @@ error_log("Session data in gradingsystem.php: " . json_encode($_SESSION));
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                if (editMode === 'add') {
-                    addStudentToTable(studentNumber, studentName);
-                } else {
-                    updateStudentInTable(studentNumber, studentName);
-                }
                 closeStudentModal();
                 hideSaveIndicator();
                 

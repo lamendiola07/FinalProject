@@ -312,6 +312,17 @@ switch ($method) {
             $stmt = $pdo->prepare("DELETE FROM course_students WHERE id = ?");
             $stmt->execute([$course_student['id']]);
             
+            // Check if student is enrolled in any other courses
+            $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM course_students WHERE student_id = ?");
+            $stmt->execute([$student['id']]);
+            $enrollmentCount = $stmt->fetch();
+            
+            // If student is not enrolled in any other courses, delete the student record
+            if ($enrollmentCount['count'] == 0) {
+                $stmt = $pdo->prepare("DELETE FROM students WHERE id = ?");
+                $stmt->execute([$student['id']]);
+            }
+            
             // Commit transaction
             $pdo->commit();
             

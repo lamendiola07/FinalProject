@@ -3,6 +3,12 @@ let courseId = null;
 let studentData = [];
 let debounceTimers = {};
 
+// Add this function to handle the back button
+function goBackToCourseSelection() {
+    console.log('Back button clicked, navigating to course selection');
+    window.location.href = 'course_selection.php';
+}
+
 function toggleUserDropdown() {
     const dropdown = document.getElementById('userDropdown');
     dropdown.classList.toggle('show');

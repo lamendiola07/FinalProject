@@ -354,3 +354,11 @@ document.addEventListener('DOMContentLoaded', function() {
 window.openAddStudentModal = openAddStudentModal;
 window.closeAddStudentModal = closeAddStudentModal;
 window.addStudent = addStudent;
+
+
+// Function to reset filters
+function resetFilters() {
+    document.getElementById('schoolYear').value = '';
+    document.getElementById('semester').value = '';
+    filterCourses();
+}

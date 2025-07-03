@@ -52,8 +52,8 @@ if (!isset($_SESSION['user_id'])) {
             <div class="filter-group">
                 <label for="schoolYear">School Year</label>
                 <select id="schoolYear">
-                    <option value="">All</option>
-                    <option value="2023-2024" selected>2023-2024</option>
+                    <option value="" selected>All</option>
+                    <option value="2023-2024">2023-2024</option>
                     <option value="2022-2023">2022-2023</option>
                     <option value="2024-2025">2024-2025</option>
                 </select>
@@ -62,9 +62,9 @@ if (!isset($_SESSION['user_id'])) {
             <div class="filter-group">
                 <label for="semester">Semester</label>
                 <select id="semester">
-                    <option value="">All</option>
+                    <option value="" selected>All</option>
                     <option value="First">First</option>
-                    <option value="Second" selected>Second</option>
+                    <option value="Second">Second</option>
                 </select>
             </div>
 

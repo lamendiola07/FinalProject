@@ -284,7 +284,7 @@ if (!isset($_SESSION['user_id'])) {
 
             <div class="controls">
                 <button class="btn btn-primary" onclick="refreshTable()">Refresh Data</button>
-                <button class="btn btn-success" onclick="exportToCSV()">Export to CSV</button>
+                <!-- Export to CSV button removed -->
                 <button class="btn btn-success" onclick="window.location.href='course_selection.php'">Edit Grading Sheet</button>
                 <button class="btn btn-success" onclick="window.location.href='add_students.php'">Manage Students</button>
                 <button class="btn btn-success" onclick="window.location.href='reports.php'">Academic Reports</button>
@@ -388,31 +388,7 @@ if (!isset($_SESSION['user_id'])) {
             loadUsers();
         }
 
-        async function exportToCSV() {
-            try {
-                const response = await fetch('export_csv.php', {
-                    method: 'GET'
-                });
-
-                if (response.ok) {
-                    const blob = await response.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'pup_users_' + new Date().toISOString().split('T')[0] + '.csv';
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
-                    
-                    alert('CSV file downloaded successfully!');
-                } else {
-                    throw new Error('Export failed');
-                }
-            } catch (error) {
-                alert('Error exporting CSV: ' + error.message);
-            }
-        }
+        // exportToCSV function removed
 
         async function logout() {
             if (confirm('Are you sure you want to logout?')) {

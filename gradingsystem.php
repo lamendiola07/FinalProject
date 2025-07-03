@@ -55,7 +55,7 @@ error_log("Session data in gradingsystem.php: " . json_encode($_SESSION));
 
     <div class="container">
         <div class="button-group">
-            <button class="btn btn-primary">Review Grading Sheet</button>
+            <button class="btn btn-primary" onclick="window.location.href='review_grading_sheet.php?id=' + getUrlParameter('id') + '&code=' + getUrlParameter('code') + '&title=' + getUrlParameter('title') + '&section=' + getUrlParameter('section') + '&schedule=' + getUrlParameter('schedule') + '&schoolYear=' + getUrlParameter('schoolYear') + '&semester=' + getUrlParameter('semester')">Review Grading Sheet</button>
             <button class="btn btn-primary" onclick="openAddStudentModal()">Add Student</button>
             <button class="btn btn-secondary" onclick="window.location.href='course_selection.php'">Back</button>
         </div>

@@ -225,10 +225,73 @@ body {
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
+/* Adjust the button group positioning to prevent overlap with dropdown */
+/* Standardize all button sizes and positioning */
 .button-group {
     display: flex;
     gap: 10px;
     align-self: end;
+    margin-left: 30px; /* Increased margin to move buttons further right */
+}
+
+/* Make ALL buttons in the header area exactly the same size */
+.search-btn, 
+.add-btn, 
+.btn-secondary, 
+.btn-academic-reports, 
+.add-student-btn {
+    border: none;
+    padding: 8px 12px; /* Exact same padding for all buttons */
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    min-width: 100px; /* Exact same width for all buttons */
+    max-width: 100px; /* Force exact width */
+    height: 36px; /* Force exact height */
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/* Ensure controls are properly spaced */
+.controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    margin-left: 20px; /* Add margin to move controls to the right */
+}
+
+/* Make action buttons in the table exactly the same size */
+.view-btn, 
+.delete-btn, 
+.action-buttons .add-student-btn {
+    border: none;
+    padding: 6px 10px; /* Exact same padding */
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.3s ease;
+    min-width: 60px; /* Exact same width */
+    max-width: 60px; /* Force exact width */
+    height: 30px; /* Force exact height */
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+/* Ensure action buttons container is properly aligned */
+.action-buttons {
+    display: flex;
+    gap: 5px; /* Reduced gap for tighter grouping */
+    align-items: center;
+    justify-content: center;
 }
 
 .controls {
@@ -268,12 +331,12 @@ body {
 }
 
 .add-btn {
-    background-color: #28a745;
+    background-color: #af4c8c;
     color: white;
 }
 
 .add-btn:hover {
-    background-color: #218838;
+    background-color: #af4c8c;
 }
 
 .courses-table {
@@ -737,22 +800,23 @@ body {
 }
 
 .add-student-btn {
-    background-color: #4CAF50;
+    background-color: #af4c8c;
     color: white;
     border: none;
-    padding: 6px 12px;
+    padding: 6px 2px; /* Match the View and Delete buttons */
     border-radius: 4px;
     cursor: pointer;
-    margin-right: 5px;
-    font-size: 14px;
+    transition: background-color 0.3 ease;
+    font-size: 12px; /* Reduced from 14px to match other action buttons */
+    min-width: 20px; /* Match the View and Delete buttons */
 }
 
 .add-student-btn:hover {
-    background-color: #45a049;
+    background-color: #af4c8c;
 }
 
 .academic-reports, .btn-academic-reports {
-    background-color: #28a745 !important;
+    background-color: #af4c8c !important;
     color: white !important;
     padding: 10px 20px;
     border-radius: 4px;
@@ -762,7 +826,7 @@ body {
 }
 
 .academic-reports:hover, .btn-academic-reports:hover {
-    background-color: #218838 !important;
+    background-color: #af4c8c !important;
 }
 
 @media (max-width: 480px) {
@@ -896,7 +960,7 @@ body {
 }
 
 .view-btn {
-    background-color: #007bff;
+    background-color: #af4c8c;
     color: white;
 }
 
@@ -926,16 +990,17 @@ body {
 }
 
 .add-student-btn {
-    background-color: #4CAF50;
+    background-color: #af4c8c;
     color: white;
     border: none;
-    padding: 6px 12px;
+    padding: 6px 12px; /* Match the View and Delete buttons */
     border-radius: 4px;
     cursor: pointer;
-    margin-right: 5px;
-    font-size: 14px;
+    transition: background-color 0.3 ease;
+    font-size: 12px; /* Reduced from 14px to match other action buttons */
+    min-width: 20px; /* Match the View and Delete buttons */
 }
 
 .add-student-btn:hover {
-    background-color: #45a049;
+    background-color: #af4c8c;
 }

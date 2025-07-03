@@ -370,7 +370,7 @@ body {
 }
 
 .view-btn {
-    background-color: #007bff;
+    background-color: #4caf61;
     color: white;
     border: none;
     padding: 6px 12px;
@@ -382,7 +382,7 @@ body {
 }
 
 .view-btn:hover {
-    background-color: #0056b3;
+    background-color: #377845;
 }
 
 .course-code {
@@ -770,12 +770,12 @@ body {
 }
 
 .view-btn {
-    background-color: #007bff;
+    background-color: #4caf61;
     color: white;
 }
 
 .view-btn:hover {
-    background-color: #0056b3;
+    background-color: #306c3d;
 }
 
 .delete-btn {
@@ -800,7 +800,7 @@ body {
 }
 
 .add-student-btn {
-    background-color: #af4c8c;
+    background-color: #f0d071;
     color: white;
     border: none;
     padding: 6px 2px; /* Match the View and Delete buttons */
@@ -812,11 +812,11 @@ body {
 }
 
 .add-student-btn:hover {
-    background-color: #af4c8c;
+    background-color: #c8ad5e;
 }
 
 .academic-reports, .btn-academic-reports {
-    background-color: #af4c8c !important;
+    background-color: #9408f9 !important;
     color: white !important;
     padding: 10px 20px;
     border-radius: 4px;
@@ -826,7 +826,7 @@ body {
 }
 
 .academic-reports:hover, .btn-academic-reports:hover {
-    background-color: #af4c8c !important;
+    background-color: #3b1663 !important;
 }
 
 @media (max-width: 480px) {
@@ -960,12 +960,12 @@ body {
 }
 
 .view-btn {
-    background-color: #af4c8c;
+    background-color: #4caf61;
     color: white;
 }
 
 .view-btn:hover {
-    background-color: #0056b3;
+    background-color: #1e4e2d;
 }
 
 .delete-btn {
@@ -990,7 +990,7 @@ body {
 }
 
 .add-student-btn {
-    background-color: #af4c8c;
+    background-color: #f0d071;
     color: white;
     border: none;
     padding: 6px 12px; /* Match the View and Delete buttons */
@@ -1002,5 +1002,5 @@ body {
 }
 
 .add-student-btn:hover {
-    background-color: #af4c8c;
+    background-color: #c8ad5e;
 }

@@ -190,12 +190,13 @@ body {
 
 .filters {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: 1fr 1fr auto;
     gap: 20px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     padding: 20px;
     background-color: #f8f9fa;
     border-radius: 8px;
+    align-items: end;
 }
 
 .filter-group {
@@ -225,44 +226,48 @@ body {
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
-/* Adjust the button group positioning to prevent overlap with dropdown */
-/* Standardize all button sizes and positioning */
-.button-group {
+.search-group {
     display: flex;
-    gap: 10px;
-    align-self: end;
-    margin-left: 30px; /* Increased margin to move buttons further right */
+    flex-direction: column;
+    justify-content: flex-end;
 }
 
-/* Make ALL buttons in the header area exactly the same size */
+.action-buttons-container {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+
+/* Standardize button sizes */
 .search-btn, 
 .add-btn, 
 .btn-secondary, 
-.btn-academic-reports, 
-.add-student-btn {
+.btn-academic-reports {
     border: none;
-    padding: 8px 12px; /* Exact same padding for all buttons */
+    padding: 10px 16px;
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
     transition: background-color 0.3s ease;
-    min-width: 100px; /* Exact same width for all buttons */
-    max-width: 100px; /* Force exact width */
-    height: 36px; /* Force exact height */
+    min-width: 120px;
+    height: 40px;
     text-align: center;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin: 0;
     box-sizing: border-box;
+    white-space: nowrap;
 }
 
-/* Ensure controls are properly spaced */
+/* Remove the old button-group and controls styles that are causing conflicts */
+.button-group {
+    display: none;
+}
+
 .controls {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-    margin-left: 20px; /* Add margin to move controls to the right */
+    display: none;
 }
 
 /* Make action buttons in the table exactly the same size */
@@ -294,36 +299,10 @@ body {
     justify-content: center;
 }
 
-.controls {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.controls button {
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
-    min-width: 150px;
-    text-align: center;
-}
-
-.search-btn, .add-btn {
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
-    min-width: 120px;
-    text-align: center;
-}
-
 .search-btn {
     background-color: #007bff;
     color: white;
+    margin-top: 0;
 }
 
 .search-btn:hover {
@@ -336,7 +315,20 @@ body {
 }
 
 .add-btn:hover {
-    background-color: #af4c8c;
+    background-color: #8e3a70;
+}
+
+.btn-secondary:hover {
+    background-color: #545b62;
+}
+
+.btn-academic-reports {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.btn-academic-reports:hover {
+    background-color: #138496;
 }
 
 .courses-table {
@@ -815,19 +807,7 @@ body {
     background-color: #c8ad5e;
 }
 
-.academic-reports, .btn-academic-reports {
-    background-color: #9408f9 !important;
-    color: white !important;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
-}
 
-.academic-reports:hover, .btn-academic-reports:hover {
-    background-color: #3b1663 !important;
-}
 
 @media (max-width: 480px) {
     body {

@@ -143,6 +143,142 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
         .grade-scale-table th {
             background-color: #e9ecef;
         }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 30px;
+            border: none;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            color: #333;
+            font-size: 1.5em;
+        }
+        
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: #000;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+        
+        .modal-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .modal-btn.primary {
+            background-color: #4CAF50;
+            color: white;
+        }
+        
+        .modal-btn.primary:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+        
+        .modal-btn.secondary {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        .modal-btn.secondary:hover {
+            background-color: #da190b;
+            transform: translateY(-2px);
+        }
+        
+        .error-message {
+            color: #f44336;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -262,7 +398,42 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
                             </tr>
                         </tfoot>
                     </table>
-                    <button class="save-button" onclick="addAttendanceRecord()">Add Attendance Record</button>
+                    <button class="save-button" onclick="openAttendanceModal()">Add Attendance Record</button>
+                </div>
+                
+                <!-- Attendance Modal -->
+                <div id="attendanceModal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>Add Attendance Record</h3>
+                            <span class="close" onclick="closeAttendanceModal()">&times;</span>
+                        </div>
+                        <form id="attendanceForm">
+                            <div class="form-group">
+                                <label for="meetingNumber">Meeting Number:</label>
+                                <input type="number" id="meetingNumber" min="1" required>
+                                <div class="error-message" id="meetingError">Meeting number already exists</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="meetingDate">Meeting Date:</label>
+                                <input type="date" id="meetingDate" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="attendanceStatus">Attendance Status:</label>
+                                <select id="attendanceStatus" required>
+                                    <option value="present">Present</option>
+                                    <option value="absent">Absent</option>
+                                </select>
+                            </div>
+                            
+                            <div class="modal-buttons">
+                                <button type="button" class="modal-btn secondary" onclick="closeAttendanceModal()">Cancel</button>
+                                <button type="submit" class="modal-btn primary">Add Record</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
 
                 <!-- Midterm Section -->
@@ -779,27 +950,52 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
             calculateFinalGrade();
         }
 
-        // Function to add a new attendance record
-        function addAttendanceRecord() {
-            // Prompt for meeting number
-            const meetingNumber = prompt("Enter meeting number:", attendanceRecords.length + 1);
-            if (meetingNumber === null) return; // User cancelled
+        // Function to open attendance modal
+        function openAttendanceModal() {
+            const modal = document.getElementById('attendanceModal');
+            const meetingNumberInput = document.getElementById('meetingNumber');
+            const meetingDateInput = document.getElementById('meetingDate');
+            const attendanceStatusSelect = document.getElementById('attendanceStatus');
+            const errorMessage = document.getElementById('meetingError');
             
-            // Prompt for date
-            const today = new Date().toISOString().split('T')[0];
-            const date = prompt("Enter date (YYYY-MM-DD):", today);
-            if (date === null) return; // User cancelled
+            // Set default values
+            meetingNumberInput.value = attendanceRecords.length + 1;
+            meetingDateInput.value = new Date().toISOString().split('T')[0];
+            attendanceStatusSelect.value = 'present';
+            errorMessage.style.display = 'none';
             
-            // Prompt for status
-            const statusInput = prompt("Enter attendance status (present/absent):", "present").toLowerCase();
-            if (statusInput === null) return; // User cancelled
-            
-            // Validate status input
-            const status = (statusInput === "present" || statusInput === "absent") ? statusInput : "present";
+            modal.style.display = 'block';
+            meetingNumberInput.focus();
+        }
+
+        // Function to close attendance modal
+        function closeAttendanceModal() {
+            const modal = document.getElementById('attendanceModal');
+            modal.style.display = 'none';
+            document.getElementById('attendanceForm').reset();
+        }
+
+        // Function to validate meeting number
+        function validateMeetingNumber(meetingNum) {
+            return !attendanceRecords.some(record => record.meeting === meetingNum);
+        }
+
+        // Enhanced function to add attendance record
+        function addAttendanceRecord(meetingNum, date, status) {
+            // Check if meeting number already exists
+            const existingRecord = attendanceRecords.find(record => record.meeting === meetingNum);
+            if (existingRecord) {
+                const overwrite = confirm(`Meeting ${meetingNum} already exists. Do you want to overwrite it?`);
+                if (!overwrite) return false;
+                
+                // Remove the existing record
+                const index = attendanceRecords.findIndex(record => record.meeting === meetingNum);
+                attendanceRecords.splice(index, 1);
+            }
             
             // Add the new record
             attendanceRecords.push({
-                meeting: parseInt(meetingNumber),
+                meeting: meetingNum,
                 date: date,
                 status: status
             });
@@ -809,62 +1005,57 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
             
             // Update the table
             updateAttendanceTable();
+            
+            console.log('Attendance records after adding:', attendanceRecords);
+            return true;
         }
 
         // Function to load grade data
         function loadGradeData() {
             // Initialize all grade components to 0
-            
-            // Midterm components
             document.getElementById('midtermQuizScore').value = '0';
             document.getElementById('midtermActivityScore').value = '0';
             document.getElementById('midtermAssignmentScore').value = '0';
             document.getElementById('midtermRecitationScore').value = '0';
             document.getElementById('midtermExamScore').value = '0';
             
-            // Final components
             document.getElementById('finalQuizScore').value = '0';
             document.getElementById('finalActivityScore').value = '0';
             document.getElementById('finalAssignmentScore').value = '0';
             document.getElementById('finalRecitationScore').value = '0';
             document.getElementById('finalExamScore').value = '0';
             
-            // If we have actual grades from the database, use them
-            if (currentStudent.grades && currentStudent.grades.length > 0) {
-                // Loop through the grade components and set values
-                currentStudent.grades.forEach(grade => {
-                    if (grade.term === 'midterm') {
-                        if (grade.component === 'quiz') {
-                            document.getElementById('midtermQuizScore').value = grade.score;
-                        } else if (grade.component === 'activity') {
-                            document.getElementById('midtermActivityScore').value = grade.score;
-                        } else if (grade.component === 'assignment') {
-                            document.getElementById('midtermAssignmentScore').value = grade.score;
-                        } else if (grade.component === 'recitation') {
-                            document.getElementById('midtermRecitationScore').value = grade.score;
-                        } else if (grade.component === 'exam') {
-                            document.getElementById('midtermExamScore').value = grade.score;
-                        }
-                    } else if (grade.term === 'final') {
-                        if (grade.component === 'quiz') {
-                            document.getElementById('finalQuizScore').value = grade.score;
-                        } else if (grade.component === 'activity') {
-                            document.getElementById('finalActivityScore').value = grade.score;
-                        } else if (grade.component === 'assignment') {
-                            document.getElementById('finalAssignmentScore').value = grade.score;
-                        } else if (grade.component === 'recitation') {
-                            document.getElementById('finalRecitationScore').value = grade.score;
-                        } else if (grade.component === 'exam') {
-                            document.getElementById('finalExamScore').value = grade.score;
-                        }
+            // Load detailed grades from database
+            fetch(`detailed_grades_api.php?course_id=${courseId}&student_number=${currentStudent.student_number}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Load grade components
+                        data.grades.forEach(grade => {
+                            const elementId = `${grade.term}${grade.component.charAt(0).toUpperCase() + grade.component.slice(1)}Score`;
+                            const element = document.getElementById(elementId);
+                            if (element) {
+                                element.value = grade.score;
+                            }
+                        });
+                        
+                        // Load attendance records
+                        attendanceRecords = data.attendance.map(record => ({
+                            meeting: record.meeting_number,
+                            date: record.meeting_date,
+                            status: record.status
+                        }));
+                        
+                        updateAttendanceTable();
+                        calculateMidtermGrade();
+                        calculateFinalGrade();
                     }
+                })
+                .catch(error => {
+                    console.error('Error loading detailed grades:', error);
                 });
-                
-                // Recalculate grades based on loaded values
-                calculateMidtermGrade();
-                calculateFinalGrade();
-            }
             
+            // Load basic grades if available
             if (currentStudent.first_grade) {
                 document.getElementById('roundedMidtermGrade').textContent = currentStudent.first_grade;
                 document.getElementById('semestralMidtermGrade').textContent = currentStudent.first_grade;
@@ -1022,11 +1213,33 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
             const midtermGrade = parseInt(document.getElementById('roundedMidtermGrade').textContent) || 0;
             const finalGrade = parseInt(document.getElementById('roundedFinalGrade').textContent) || 0;
             
-            // Show saving indicator
+            // Collect detailed grade data
+            const detailedGrades = [
+                // Midterm grades
+                { term: 'midterm', component: 'quiz', score: parseFloat(document.getElementById('midtermQuizScore').value) || 0 },
+                { term: 'midterm', component: 'activity', score: parseFloat(document.getElementById('midtermActivityScore').value) || 0 },
+                { term: 'midterm', component: 'assignment', score: parseFloat(document.getElementById('midtermAssignmentScore').value) || 0 },
+                { term: 'midterm', component: 'recitation', score: parseFloat(document.getElementById('midtermRecitationScore').value) || 0 },
+                { term: 'midterm', component: 'exam', score: parseFloat(document.getElementById('midtermExamScore').value) || 0 },
+                // Final grades
+                { term: 'final', component: 'quiz', score: parseFloat(document.getElementById('finalQuizScore').value) || 0 },
+                { term: 'final', component: 'activity', score: parseFloat(document.getElementById('finalActivityScore').value) || 0 },
+                { term: 'final', component: 'assignment', score: parseFloat(document.getElementById('finalAssignmentScore').value) || 0 },
+                { term: 'final', component: 'recitation', score: parseFloat(document.getElementById('finalRecitationScore').value) || 0 },
+                { term: 'final', component: 'exam', score: parseFloat(document.getElementById('finalExamScore').value) || 0 }
+            ];
+            
+            // Collect attendance data
+            const attendanceData = attendanceRecords.map(record => ({
+                meeting_number: record.meeting,
+                meeting_date: record.date,
+                status: record.status
+            }));
+            
             showSaveIndicator();
             
-            // Save to database
-            fetch('grades_api.php', {
+            // Save detailed data first
+            fetch('detailed_grades_api.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -1034,15 +1247,35 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
                 body: JSON.stringify({
                     course_id: courseId,
                     student_number: currentStudent.student_number,
-                    full_name: currentStudent.full_name,
-                    first_grade: midtermGrade,
-                    second_grade: finalGrade
+                    grades: detailedGrades,
+                    attendance: attendanceData
                 })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Update the student data in our local array
+                    // Now save the summary grades
+                    return fetch('grades_api.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            course_id: courseId,
+                            student_number: currentStudent.student_number,
+                            full_name: currentStudent.full_name,
+                            first_grade: midtermGrade,
+                            second_grade: finalGrade
+                        })
+                    });
+                } else {
+                    throw new Error(data.message);
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update local data
                     const studentIndex = studentData.findIndex(s => s.student_number === currentStudent.student_number);
                     if (studentIndex !== -1) {
                         studentData[studentIndex].first_grade = midtermGrade;
@@ -1050,49 +1283,86 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
                         studentData[studentIndex].computed_grade = data.computed_grade;
                     }
                     
-                    // Update the current student object
                     currentStudent.first_grade = midtermGrade;
                     currentStudent.second_grade = finalGrade;
                     currentStudent.computed_grade = data.computed_grade;
                     
-                    // Hide saving indicator
                     hideSaveIndicator();
-                    alert('Grades saved successfully!');
+                    alert('All grades and attendance saved successfully!');
                 } else {
-                    alert('Error saving grades: ' + data.message);
-                    hideSaveIndicator();
+                    throw new Error(data.message);
                 }
             })
             .catch(error => {
-                alert('Error saving grades: ' + error.message);
+                alert('Error saving data: ' + error.message);
                 hideSaveIndicator();
             });
         }
 
-        // Function to export to CSV
+        // Function to export to CSV with detailed information
         function exportToCSV() {
             if (studentData.length === 0) {
                 alert('No student data to export');
                 return;
             }
             
-            // Create CSV content
-            let csvContent = 'Student Number,Full Name,First Grading,Second Grading,Computed Grade\n';
+            // Create detailed CSV content
+            let csvContent = 'Student Number,Full Name,First Grading,Second Grading,Computed Grade,Midterm Quiz,Midterm Activity,Midterm Assignment,Midterm Recitation,Midterm Exam,Final Quiz,Final Activity,Final Assignment,Final Recitation,Final Exam,Attendance Rate\n';
             
-            studentData.forEach(student => {
-                csvContent += `${student.student_number},"${student.full_name}",${student.first_grade || ''},${student.second_grade || ''},${student.computed_grade || ''}\n`;
+            // For each student, fetch their detailed data
+            const promises = studentData.map(student => {
+                return fetch(`detailed_grades_api.php?course_id=${courseId}&student_number=${student.student_number}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        let row = `${student.student_number},"${student.full_name}",${student.first_grade || ''},${student.second_grade || ''},${student.computed_grade || ''}`;
+                        
+                        if (data.success) {
+                            // Add detailed grades
+                            const gradeComponents = ['quiz', 'activity', 'assignment', 'recitation', 'exam'];
+                            const terms = ['midterm', 'final'];
+                            
+                            terms.forEach(term => {
+                                gradeComponents.forEach(component => {
+                                    const grade = data.grades.find(g => g.term === term && g.component === component);
+                                    row += `,${grade ? grade.score : ''}`;
+                                });
+                            });
+                            
+                            // Calculate attendance rate
+                            if (data.attendance.length > 0) {
+                                const presentCount = data.attendance.filter(a => a.status === 'present').length;
+                                const attendanceRate = ((presentCount / data.attendance.length) * 100).toFixed(2);
+                                row += `,${attendanceRate}%`;
+                            } else {
+                                row += `,N/A`;
+                            }
+                        } else {
+                            // Add empty columns for detailed grades and attendance
+                            row += ',,,,,,,,,,,N/A';
+                        }
+                        
+                        return row;
+                    })
+                    .catch(() => {
+                        // If error, add basic info with empty detailed columns
+                        return `${student.student_number},"${student.full_name}",${student.first_grade || ''},${student.second_grade || ''},${student.computed_grade || ''},,,,,,,,,,,N/A`;
+                    });
             });
             
-            // Create download link
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.setAttribute('href', url);
-            link.setAttribute('download', 'grading_sheet.csv');
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            Promise.all(promises).then(rows => {
+                csvContent += rows.join('\n');
+                
+                // Create download link
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                link.setAttribute('download', 'detailed_grading_sheet.csv');
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
         }
 
         function showSaveIndicator() {
@@ -1116,6 +1386,61 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
             loadCourseInfo();
+            
+            const attendanceForm = document.getElementById('attendanceForm');
+            const modal = document.getElementById('attendanceModal');
+            
+            // Close modal when clicking outside
+            window.onclick = function(event) {
+                if (event.target === modal) {
+                    closeAttendanceModal();
+                }
+            }
+            
+            // Handle form submission
+            attendanceForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const meetingNum = parseInt(document.getElementById('meetingNumber').value);
+                const date = document.getElementById('meetingDate').value;
+                const status = document.getElementById('attendanceStatus').value;
+                const errorMessage = document.getElementById('meetingError');
+                
+                // Validate meeting number
+                if (!validateMeetingNumber(meetingNum)) {
+                    errorMessage.style.display = 'block';
+                    return;
+                }
+                
+                errorMessage.style.display = 'none';
+                
+                // Add the record
+                if (addAttendanceRecord(meetingNum, date, status)) {
+                    closeAttendanceModal();
+                    
+                    // Show success message
+                    const successMsg = document.createElement('div');
+                    successMsg.textContent = 'Attendance record added successfully!';
+                    successMsg.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #4CAF50; color: white; padding: 15px; border-radius: 5px; z-index: 1001;';
+                    document.body.appendChild(successMsg);
+                    
+                    setTimeout(() => {
+                        document.body.removeChild(successMsg);
+                    }, 3000);
+                }
+            });
+            
+            // Real-time validation for meeting number
+            document.getElementById('meetingNumber').addEventListener('input', function() {
+                const meetingNum = parseInt(this.value);
+                const errorMessage = document.getElementById('meetingError');
+                
+                if (meetingNum && !validateMeetingNumber(meetingNum)) {
+                    errorMessage.style.display = 'block';
+                } else {
+                    errorMessage.style.display = 'none';
+                }
+            });
         });
     </script>
 </body>

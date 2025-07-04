@@ -68,19 +68,16 @@ if (!isset($_SESSION['user_id'])) {
                 </select>
             </div>
 
-            <div class="filter-group">
+            <div class="filter-group search-group">
                 <label></label>
-                <div class="button-group">
-                    <button class="search-btn" onclick="filterCourses()">Search</button>
-                    <button class="add-btn" onclick="openAddCourseModal()">Add Course</button>
-                    <div class="controls">
-                        <button class="btn-secondary" onclick="window.location.href='dashboard.php'">Back to Dashboard</button>
-                        <button class="btn-academic-reports" onclick="window.location.href='reports.php'">Academic Reports</button>
-                        <!-- Removed the Add Student button as requested -->
-                        <!-- Removed duplicate Add Course button -->
-                    </div>
-                </div>
+                <button class="search-btn" onclick="filterCourses()">Search</button>
             </div>
+        </div>
+        
+        <div class="action-buttons-container">
+            <button class="add-btn" onclick="openAddCourseModal()">Add Course</button>
+            <button class="btn-secondary" onclick="window.location.href='dashboard.php'">Back to Dashboard</button>
+            <button class="btn-academic-reports" onclick="window.location.href='reports.php'">Academic Reports</button>
         </div>
 
         <table class="courses-table">

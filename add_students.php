@@ -354,7 +354,7 @@ try {
             <thead>
                 <tr>
                     <th>Student Number</th>
-can you set the dropdown for all even when there is only one course and section from the student, fo uniformality                    <th>Name</th>
+                    <th>Name</th>
                     <th>Course, Year and Section</th>
                     <th>Actions</th>
                 </tr>

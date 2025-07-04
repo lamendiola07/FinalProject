@@ -362,3 +362,25 @@ function resetFilters() {
     document.getElementById('semester').value = '';
     filterCourses();
 }
+
+// Add this to the addCourse function where the form data is collected
+function addCourse() {
+    // Existing code...
+    
+    const passingGrade = document.getElementById('passingGrade').value || 75;
+    const gradeComputationMethod = document.getElementById('gradeComputationMethod').value;
+    
+    // Add to the data object
+    const data = {
+        code: courseCode,
+        subject: courseSubject,
+        sectionCode: sectionCode,
+        schedule: schedule,
+        schoolYear: schoolYear,
+        semester: semester,
+        passingGrade: passingGrade,
+        gradeComputationMethod: gradeComputationMethod
+    };
+    
+    // Rest of the existing code...
+}

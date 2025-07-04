@@ -22,6 +22,30 @@ switch ($method) {
             $stmt->execute([$faculty_id]);
             $courses = $stmt->fetchAll();
             
+            // In the GET case, add a condition to get a specific course
+            if (isset($_GET['id'])) {
+                $course_id = $_GET['id'];
+                
+                try {
+                    $stmt = $pdo->prepare("SELECT * FROM courses WHERE id = ? AND faculty_id = ?");
+                    $stmt->execute([$course_id, $faculty_id]);
+                    $course = $stmt->fetch();
+                    
+                    if (!$course) {
+                        // Try without faculty check during development
+                        $stmt = $pdo->prepare("SELECT * FROM courses WHERE id = ?");
+                        $stmt->execute([$course_id]);
+                        $course = $stmt->fetch();
+                    }
+                    
+                    header('Content-Type: application/json');
+                    echo json_encode(['success' => true, 'course' => $course]);
+                } catch(PDOException $e) {
+                    header('Content-Type: application/json');
+                    echo json_encode(['success' => false, 'message' => 'Error fetching course: ' . $e->getMessage()]);
+                }
+                exit;
+            }
             header('Content-Type: application/json');
             echo json_encode(['success' => true, 'courses' => $courses]);
         } catch(PDOException $e) {
@@ -46,8 +70,9 @@ switch ($method) {
             $pdo->beginTransaction();
             
             // Insert the course
-            $stmt = $pdo->prepare("INSERT INTO courses (code, subject, section_code, schedule, school_year, semester, faculty_id) 
-                                 VALUES (?, ?, ?, ?, ?, ?, ?)");
+            // In the POST case, update the SQL query
+            $stmt = $pdo->prepare("INSERT INTO courses (code, subject, section_code, schedule, school_year, semester, faculty_id, passing_grade, grade_computation_method) 
+                             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->execute([
                 $data['code'],
                 $data['subject'],
@@ -55,9 +80,10 @@ switch ($method) {
                 $data['schedule'],
                 $data['schoolYear'],
                 $data['semester'],
-                $faculty_id
+                $faculty_id,
+                $data['passingGrade'] ?? 75.00,
+                $data['gradeComputationMethod'] ?? 'base_50'
             ]);
-            
             $courseId = $pdo->lastInsertId();
             
             // Add students to the course based on section and course code

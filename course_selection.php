@@ -142,6 +142,23 @@ if (!isset($_SESSION['user_id'])) {
                     </select>
                 </div>
                 
+                <div class="form-group">
+                    <!-- Add this inside the course form -->
+                    <div class="form-group">
+                        <label for="passingGrade">Passing Grade:</label>
+                        <input type="number" id="passingGrade" min="50" max="100" step="0.01" value="75.00" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="gradeComputationMethod">Grade Computation Method:</label>
+                        <select id="gradeComputationMethod" required>
+                            <option value="base_50">Base 50</option>
+                            <option value="base_0">Base 0</option>
+                        </select>
+                        <small class="form-text text-muted">Base 50: Lowest possible grade is 50. Base 0: Lowest possible grade is 0.</small>
+                    </div>
+                </div>
+                
                 <div class="form-buttons">
                     <button type="button" class="btn-secondary" onclick="closeAddCourseModal()">Cancel</button>
                     <button type="submit" class="btn-primary">Add Course</button>

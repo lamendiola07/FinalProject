@@ -96,6 +96,6 @@ if (!isset($_SESSION['user_id'])) {
         <div id="alertContainer"></div>
     </div>
 
-    <script src="javascript/reports_script.js"></script>
+    <script src="javascript/reports_script.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

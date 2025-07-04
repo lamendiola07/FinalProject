@@ -76,7 +76,7 @@ switch ($method) {
                 
                 // Get pass rate (assuming passing grade is below 3.00)
                 $stmt = $pdo->prepare("SELECT 
-                                     COUNT(CASE WHEN g.computed_grade < 3.00 THEN 1 END) as passed,
+                                     COUNT(CASE WHEN g.computed_grade <= 3.00 THEN 1 END) as passed,
                                      COUNT(g.computed_grade) as total
                                      FROM grades g 
                                      JOIN course_students cs ON g.course_student_id = cs.id 

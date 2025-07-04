@@ -92,8 +92,16 @@ async function generateCourseReport() {
                 let statusColor = '';
                 
                 if (computedGrade !== null && !isNaN(computedGrade)) {
-                    status = computedGrade < 3.00 ? 'PASSED' : 'FAILED';
-                    statusColor = computedGrade < 3.00 ? 'green' : 'red';
+                    // Check if the grade is already in PUP format (1.00-5.00) or numerical format (0-100)
+                    if (computedGrade <= 5.00 && computedGrade >= 1.00) {
+                        // It's in PUP format
+                        status = computedGrade <= 3.00 ? 'PASSED' : 'FAILED';
+                        statusColor = computedGrade <= 3.00 ? 'green' : 'red';
+                    } else {
+                        // It's in numerical format
+                        status = computedGrade >= 75.00 ? 'PASSED' : 'FAILED';
+                        statusColor = computedGrade >= 75.00 ? 'green' : 'red';
+                    }
                 }
                 
                 const row = `

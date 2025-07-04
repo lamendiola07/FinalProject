@@ -1,4 +1,4 @@
-eports.php
+eports_script.js
 <?php
 require_once 'config.php';
 

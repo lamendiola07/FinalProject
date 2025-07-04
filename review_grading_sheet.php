@@ -766,6 +766,8 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
         let currentStudent = null;
         let attendanceRecords = [];
         let debounceTimers = {};
+        let coursePassingGrade = 75.00;
+        let courseGradeComputationMethod = 'base_50';
 
         // Function to toggle user dropdown
         function toggleUserDropdown() {
@@ -827,6 +829,22 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
             } else {
                 console.error('No course ID found in URL parameters');
             }
+
+            // Load course settings
+            fetch(`course_api.php?id=${courseId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.course) {
+                        coursePassingGrade = parseFloat(data.course.passing_grade) || 75.00;
+                        courseGradeComputationMethod = data.course.grade_computation_method || 'base_50';
+                        
+                        // Update UI to show current settings
+                        document.getElementById('coursePassingGrade').textContent = coursePassingGrade;
+                        document.getElementById('courseGradeMethod').textContent = 
+                            courseGradeComputationMethod === 'base_50' ? 'Base 50' : 'Base 0';
+                    }
+                })
+                .catch(error => console.error('Error loading course settings:', error));
         }
 
         // Function to load students for the current course
@@ -1113,6 +1131,9 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
             const totalMidtermGrade = classParticipationTotal + examWeighted;
             document.getElementById('totalMidtermGrade').textContent = totalMidtermGrade.toFixed(2);
             
+            // Apply the grade computation method before rounding
+            const adjustedGrade = applyGradeComputationMethod(totalMidtermGrade, 100);
+
             // Round the grade to the nearest whole number
             const roundedMidtermGrade = Math.round(totalMidtermGrade);
             document.getElementById('roundedMidtermGrade').textContent = roundedMidtermGrade;
@@ -1188,6 +1209,8 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
 
         // Function to get grade equivalent based on scale
         function getGradeEquivalent(score) {
+            // If score is below passing grade, it's a failing grade
+            if (score < coursePassingGrade) return '5.00';
             if (score >= 97) return '1.00';
             if (score >= 94) return '1.25';
             if (score >= 91) return '1.50';
@@ -1381,6 +1404,17 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
 
         function logout() {
             window.location.href = 'auth_handler.php?action=logout';
+        }
+
+        // Add a function to apply the grade computation method
+        function applyGradeComputationMethod(rawScore, maxScore) {
+            if (courseGradeComputationMethod === 'base_0') {
+                // Base 0: Score can be as low as 0
+                return rawScore;
+            } else {
+                // Base 50: Score can't be lower than 50
+                return Math.max(50, rawScore);
+            }
         }
 
         // Initialize page

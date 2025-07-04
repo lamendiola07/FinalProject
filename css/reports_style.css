@@ -6,7 +6,11 @@
 }
 
 body {
-    background: linear-gradient(135deg, #700000, #b44545);
+    background-image: linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)), url('../img/pupbg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     min-height: 100vh;
     padding: 20px;
 }
@@ -171,12 +175,12 @@ body {
 }
 
 .stat-card {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #700000, #b44545);
     color: white;
     padding: 25px;
     border-radius: 15px;
     text-align: center;
-    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 10px 25px rgba(112, 0, 0, 0.3);
 }
 
 .stat-card h3 {

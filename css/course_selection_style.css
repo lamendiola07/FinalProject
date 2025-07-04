@@ -310,12 +310,12 @@ body {
 }
 
 .add-btn {
-    background-color: #af4c8c;
+    background-color: #700000;
     color: white;
 }
 
 .add-btn:hover {
-    background-color: #8e3a70;
+    background-color: #500000;
 }
 
 .btn-secondary:hover {
@@ -792,7 +792,7 @@ body {
 }
 
 .add-student-btn {
-    background-color: #f0d071;
+    background-color: #4caf61;
     color: white;
     border: none;
     padding: 6px 2px; /* Match the View and Delete buttons */
@@ -804,7 +804,7 @@ body {
 }
 
 .add-student-btn:hover {
-    background-color: #c8ad5e;
+    background-color: #1e4e2d;
 }
 
 
@@ -970,7 +970,7 @@ body {
 }
 
 .add-student-btn {
-    background-color: #f0d071;
+    background-color: #4caf61;
     color: white;
     border: none;
     padding: 6px 12px; /* Match the View and Delete buttons */
@@ -982,5 +982,5 @@ body {
 }
 
 .add-student-btn:hover {
-    background-color: #c8ad5e;
+    background-color: #1e4e2d;
 }

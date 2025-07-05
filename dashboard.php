@@ -21,7 +21,11 @@ if (!isset($_SESSION['user_id'])) {
         }
 
         body {
-            background: linear-gradient(135deg, #700000, #b44545);
+            background-image: linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)), url('img/pupbg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
             min-height: 100vh;
             padding: 20px;
         }

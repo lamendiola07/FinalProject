@@ -682,7 +682,59 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
                 </div>
                 <div class="status-item">
                     <div class="status-label">Faculty</div>
-                    <div class="status-value" id="facultyInfo"><?php echo htmlspecialchars($_SESSION['user_name'] ?? ''); ?></div>
+                    <div class="status-value" id="facultyInfo"><?php echo htmlspecialchars($_SESSION['user_name'] ?? '');?> 
+<!--
+TODO: Update the CSV export functionality in the exportToCSV() function to include recitation and exam scores.
+Add the following code after the assignment scores section:
+
+if (midtermRecitations.success) {
+    midtermRecitations.items.forEach(item => {
+        csvContent += ',Midterm Recitation: ' + item.name + ' (' + item.max_score + 'pts)';
+    });
+}
+if (midtermExams.success) {
+    midtermExams.items.forEach(item => {
+        csvContent += ',Midterm Exam: ' + item.name + ' (' + item.max_score + 'pts)';
+    });
+}
+
+if (finalRecitations.success) {
+    finalRecitations.items.forEach(item => {
+        csvContent += ',Final Recitation: ' + item.name + ' (' + item.max_score + 'pts)';
+    });
+}
+if (finalExams.success) {
+    finalExams.items.forEach(item => {
+        csvContent += ',Final Exam: ' + item.name + ' (' + item.max_score + 'pts)';
+    });
+}
+
+And update the header row to include recitation and exam averages:
+
+csvContent += ',Midterm Quiz Avg,Midterm Activity Avg,Midterm Assignment Avg,Midterm Recitation Avg,Midterm Exam Avg,Final Quiz Avg,Final Activity Avg,Final Assignment Avg,Final Recitation Avg,Final Exam Avg,Attendance Rate
+';
+
+Also update the Promise.all to include recitation and exam scores:
+
+const [mQuizScores, mActivityScores, mAssignmentScores, mRecitationScores, mExamScores, fQuizScores, fActivityScores, fAssignmentScores, fRecitationScores, fExamScores] = await Promise.all([
+    fetch(`items_api.php?action=get_scores&course_id=&term=midterm&type=quiz`).then(r => r.json()),
+    fetch(`items_api.php?action=get_scores&course_id=&term=midterm&type=activity`).then(r => r.json()),
+    fetch(`items_api.php?action=get_scores&course_id=&term=midterm&type=assignment`).then(r => r.json()),
+    fetch(`items_api.php?action=get_scores&course_id=&term=midterm&type=recitation`).then(r => r.json()),
+    fetch(`items_api.php?action=get_scores&course_id=&term=midterm&type=exam`).then(r => r.json()),
+    fetch(`items_api.php?action=get_scores&course_id=&term=final&type=quiz`).then(r => r.json()),
+    fetch(`items_api.php?action=get_scores&course_id=&term=final&type=activity`).then(r => r.json()),
+    fetch(`items_api.php?action=get_scores&course_id=&term=final&type=assignment`).then(r => r.json()),
+    fetch(`items_api.php?action=get_scores&course_id=&term=final&type=recitation`).then(r => r.json()),
+    fetch(`items_api.php?action=get_scores&course_id=&term=final&type=exam`).then(r => r.json())
+]);
+
+And add the item scores for recitation and exam:
+
+addItemScores(midtermRecitations, mRecitationScores);
+-->
+
+?></div>
                 </div>
             </div>
             <div>
@@ -2124,13 +2176,17 @@ async function addAttendanceRecord(meetingNum, date, status) {
             
             try {
                 // Get all individual items for both terms
-                const [midtermQuizzes, midtermActivities, midtermAssignments, finalQuizzes, finalActivities, finalAssignments] = await Promise.all([
+                const [midtermQuizzes, midtermActivities, midtermAssignments, midtermRecitations, midtermExams, finalQuizzes, finalActivities, finalAssignments, finalRecitations, finalExams] = await Promise.all([
                     fetch(`items_api.php?action=get_items&course_id=${courseId}&term=midterm&type=quiz`).then(r => r.json()),
                     fetch(`items_api.php?action=get_items&course_id=${courseId}&term=midterm&type=activity`).then(r => r.json()),
                     fetch(`items_api.php?action=get_items&course_id=${courseId}&term=midterm&type=assignment`).then(r => r.json()),
+                    fetch(`items_api.php?action=get_items&course_id=${courseId}&term=midterm&type=recitation`).then(r => r.json()),
+                    fetch(`items_api.php?action=get_items&course_id=${courseId}&term=midterm&type=exam`).then(r => r.json()),
                     fetch(`items_api.php?action=get_items&course_id=${courseId}&term=final&type=quiz`).then(r => r.json()),
                     fetch(`items_api.php?action=get_items&course_id=${courseId}&term=final&type=activity`).then(r => r.json()),
-                    fetch(`items_api.php?action=get_items&course_id=${courseId}&term=final&type=assignment`).then(r => r.json())
+                    fetch(`items_api.php?action=get_items&course_id=${courseId}&term=final&type=assignment`).then(r => r.json()),
+                    fetch(`items_api.php?action=get_items&course_id=${courseId}&term=final&type=recitation`).then(r => r.json()),
+                    fetch(`items_api.php?action=get_items&course_id=${courseId}&term=final&type=exam`).then(r => r.json())
                 ]);
                 
                 // Build CSV header
@@ -2169,22 +2225,50 @@ async function addAttendanceRecord(meetingNum, date, status) {
                         csvContent += `,Final Assignment: ${item.name} (${item.max_score}pts)`;
                     });
                 }
+
+                // Add midterm recitation and exam headers
+                if (midtermRecitations.success) {
+                    midtermRecitations.items.forEach(item => {
+                        csvContent += `,Midterm Recitation: ${item.name} (${item.max_score}pts)`;
+                    });
+                }
+                if (midtermExams.success) {
+                    midtermExams.items.forEach(item => {
+                        csvContent += `,Midterm Exam: ${item.name} (${item.max_score}pts)`;
+                    });
+                }
+
+                // Add final recitation and exam headers
+                if (finalRecitations.success) {
+                    finalRecitations.items.forEach(item => {
+                        csvContent += `,Final Recitation: ${item.name} (${item.max_score}pts)`;
+                    });
+                }
+                if (finalExams.success) {
+                    finalExams.items.forEach(item => {
+                        csvContent += `,Final Exam: ${item.name} (${item.max_score}pts)`;
+                    });
+                }
                 
-                csvContent += ',Midterm Quiz Avg,Midterm Activity Avg,Midterm Assignment Avg,Final Quiz Avg,Final Activity Avg,Final Assignment Avg,Attendance Rate\n';
+                csvContent += ',Midterm Quiz Avg,Midterm Activity Avg,Midterm Assignment Avg,Midterm Recitation Avg,Midterm Exam Avg,Final Quiz Avg,Final Activity Avg,Final Assignment Avg,Final Recitation Avg,Final Exam Avg,Attendance Rate\n';
                 
                 // Add student data
                 for (const student of studentData) {
                     let row = `${student.student_number},"${student.full_name}",${student.first_grade || ''},${student.second_grade || ''},${student.computed_grade || ''}`;
                     
                     // Get individual scores for this student
-                    const [mQuizScores, mActivityScores, mAssignmentScores, fQuizScores, fActivityScores, fAssignmentScores] = await Promise.all([
-                        fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=midterm&type=quiz`).then(r => r.json()),
-                        fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=midterm&type=activity`).then(r => r.json()),
-                        fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=midterm&type=assignment`).then(r => r.json()),
-                        fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=final&type=quiz`).then(r => r.json()),
-                        fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=final&type=activity`).then(r => r.json()),
-                        fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=final&type=assignment`).then(r => r.json())
-                    ]);
+                    const [mQuizScores, mActivityScores, mAssignmentScores, mRecitationScores, mExamScores, fQuizScores, fActivityScores, fAssignmentScores, fRecitationScores, fExamScores] = await Promise.all([
+                            fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=midterm&type=quiz`).then(r => r.json()),
+                            fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=midterm&type=activity`).then(r => r.json()),
+                            fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=midterm&type=assignment`).then(r => r.json()),
+                            fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=midterm&type=recitation`).then(r => r.json()),
+                            fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=midterm&type=exam`).then(r => r.json()),
+                            fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=final&type=quiz`).then(r => r.json()),
+                            fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=final&type=activity`).then(r => r.json()),
+                            fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=final&type=assignment`).then(r => r.json()),
+                            fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=final&type=recitation`).then(r => r.json()),
+                            fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=final&type=exam`).then(r => r.json())
+                        ]);
                     
                     // Add individual item scores
                     const addItemScores = (items, scores) => {
@@ -2202,6 +2286,10 @@ async function addAttendanceRecord(meetingNum, date, status) {
                     addItemScores(finalQuizzes, fQuizScores);
                     addItemScores(finalActivities, fActivityScores);
                     addItemScores(finalAssignments, fAssignmentScores);
+                    addItemScores(midtermRecitations, mRecitationScores);
+                    addItemScores(midtermExams, mExamScores);
+                    addItemScores(finalRecitations, fRecitationScores);
+                    addItemScores(finalExams, fExamScores);
                     
                     // Calculate and add averages
                     const calculateAverage = (items, scores) => {
@@ -2221,7 +2309,11 @@ async function addAttendanceRecord(meetingNum, date, status) {
                     row += `,${calculateAverage(finalQuizzes, fQuizScores).toFixed(2)}`;
                     row += `,${calculateAverage(finalActivities, fActivityScores).toFixed(2)}`;
                     row += `,${calculateAverage(finalAssignments, fAssignmentScores).toFixed(2)}`;
-                    
+                    row += `,${calculateAverage(midtermRecitations, mRecitationScores).toFixed(2)}`;
+                    row += `,${calculateAverage(midtermExams, mExamScores).toFixed(2)}`;
+                    row += `,${calculateAverage(finalRecitations, fRecitationScores).toFixed(2)}`;
+                    row += `,${calculateAverage(finalExams, fExamScores).toFixed(2)}`;
+
                     // Add attendance rate
                     try {
                         const attendanceResponse = await fetch(`detailed_grades_api.php?course_id=${courseId}&student_number=${student.student_number}`);

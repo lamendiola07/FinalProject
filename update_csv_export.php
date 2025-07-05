@@ -16,7 +16,7 @@ try {
         throw new Exception("Unable to read file review_grading_sheet.php");
     }
     
-    // Create the message to add
+    // Create the message to add - escape $ with \ in JavaScript template literals
     $message = "<!-- 
 TODO: Update the CSV export functionality in the exportToCSV() function to include recitation and exam scores.
 Add the following code after the assignment scores section:
@@ -50,16 +50,16 @@ csvContent += ',Midterm Quiz Avg,Midterm Activity Avg,Midterm Assignment Avg,Mid
 Also update the Promise.all to include recitation and exam scores:
 
 const [mQuizScores, mActivityScores, mAssignmentScores, mRecitationScores, mExamScores, fQuizScores, fActivityScores, fAssignmentScores, fRecitationScores, fExamScores] = await Promise.all([
-    fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=midterm&type=quiz`).then(r => r.json()),
-    fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=midterm&type=activity`).then(r => r.json()),
-    fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=midterm&type=assignment`).then(r => r.json()),
-    fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=midterm&type=recitation`).then(r => r.json()),
-    fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=midterm&type=exam`).then(r => r.json()),
-    fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=final&type=quiz`).then(r => r.json()),
-    fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=final&type=activity`).then(r => r.json()),
-    fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=final&type=assignment`).then(r => r.json()),
-    fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=final&type=recitation`).then(r => r.json()),
-    fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=final&type=exam`).then(r => r.json())
+    fetch(`items_api.php?action=get_scores&course_id=\${courseId}&term=midterm&type=quiz`).then(r => r.json()),
+    fetch(`items_api.php?action=get_scores&course_id=\${courseId}&term=midterm&type=activity`).then(r => r.json()),
+    fetch(`items_api.php?action=get_scores&course_id=\${courseId}&term=midterm&type=assignment`).then(r => r.json()),
+    fetch(`items_api.php?action=get_scores&course_id=\${courseId}&term=midterm&type=recitation`).then(r => r.json()),
+    fetch(`items_api.php?action=get_scores&course_id=\${courseId}&term=midterm&type=exam`).then(r => r.json()),
+    fetch(`items_api.php?action=get_scores&course_id=\${courseId}&term=final&type=quiz`).then(r => r.json()),
+    fetch(`items_api.php?action=get_scores&course_id=\${courseId}&term=final&type=activity`).then(r => r.json()),
+    fetch(`items_api.php?action=get_scores&course_id=\${courseId}&term=final&type=assignment`).then(r => r.json()),
+    fetch(`items_api.php?action=get_scores&course_id=\${courseId}&term=final&type=recitation`).then(r => r.json()),
+    fetch(`items_api.php?action=get_scores&course_id=\${courseId}&term=final&type=exam`).then(r => r.json())
 ]);
 
 And add the item scores for recitation and exam:

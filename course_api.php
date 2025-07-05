@@ -158,6 +158,38 @@ switch ($method) {
         }
         break;
         
+    case 'PUT':
+        // Update course settings
+        $data = json_decode(file_get_contents('php://input'), true);
+        
+        if (!isset($data['id'])) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Course ID is required']);
+            exit;
+        }
+        
+        try {
+            $stmt = $pdo->prepare("UPDATE courses SET passing_grade = ?, grade_computation_method = ? WHERE id = ? AND faculty_id = ?");
+            $stmt->execute([
+                $data['passing_grade'] ?? 75.00,
+                $data['grade_computation_method'] ?? 'base_50',
+                $data['id'],
+                $faculty_id
+            ]);
+            
+            if ($stmt->rowCount() > 0) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => true, 'message' => 'Course settings updated successfully']);
+            } else {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => 'Course not found or you do not have permission to update it']);
+            }
+        } catch(PDOException $e) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Error updating course settings: ' . $e->getMessage()]);
+        }
+        break;
+        
     default:
         header('Content-Type: application/json');
         echo json_encode(['success' => false, 'message' => 'Method not allowed']);

@@ -170,6 +170,8 @@ async function loadStudentsAndGrades() {
             console.log('Course data:', data.course);
             // Populate student table
             populateStudentTable(data.students);
+            // Load course settings
+            loadCourseSettings();
         } else {
             console.error('Error loading students:', data.message);
             alert('Error loading students: ' + data.message);
@@ -177,6 +179,31 @@ async function loadStudentsAndGrades() {
     } catch (error) {
         console.error('Error loading students:', error);
         alert('Error loading students: ' + error.message);
+    }
+}
+
+// Add this new function to load course settings
+async function loadCourseSettings() {
+    try {
+        const response = await fetch(`course_api.php?id=${courseId}`);
+        const data = await response.json();
+        
+        if (data.success && data.course) {
+            // Update the course settings display
+            const passingGradeElement = document.getElementById('coursePassingGrade');
+            const gradeMethodElement = document.getElementById('courseGradeMethod');
+            
+            if (passingGradeElement) {
+                passingGradeElement.textContent = data.course.passing_grade || '75.00';
+            }
+            
+            if (gradeMethodElement) {
+                const methodText = data.course.grade_computation_method === 'base_0' ? 'Base 0' : 'Base 50';
+                gradeMethodElement.textContent = methodText;
+            }
+        }
+    } catch (error) {
+        console.error('Error loading course settings:', error);
     }
 }
 

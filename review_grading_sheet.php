@@ -2277,11 +2277,10 @@ async function addAttendanceRecord(meetingNum, date, status) {
         // Add a function to apply the grade computation method
         function applyGradeComputationMethod(rawScore, maxScore) {
             if (courseGradeComputationMethod === 'base_0') {
-                // Base 0: Score can be as low as 0
                 return rawScore;
-            } else {
-                // Base 50: Score can't be lower than 50
-                return Math.max(50, rawScore);
+            } else { // base_50
+                // Map the score from 0-100 to 50-100 range
+                return 50 + (rawScore / 2);
             }
         }
 
@@ -2722,7 +2721,7 @@ async function addAttendanceRecord(meetingNum, date, status) {
             document.getElementById('assignmentWeight').value = gradeWeights.assignment;
             document.getElementById('recitationWeight').value = gradeWeights.recitation;
             document.getElementById('examWeight').value = gradeWeights.exam;
-    
+
             // Trigger the update of all percentage labels
             document.getElementById('attendanceWeight').dispatchEvent(new Event('input'));
             document.getElementById('quizWeight').dispatchEvent(new Event('input'));
@@ -2730,7 +2729,7 @@ async function addAttendanceRecord(meetingNum, date, status) {
             document.getElementById('assignmentWeight').dispatchEvent(new Event('input'));
             document.getElementById('recitationWeight').dispatchEvent(new Event('input'));
             document.getElementById('examWeight').dispatchEvent(new Event('input'));
-    
+
             // Set computation method and passing grade
             document.getElementById('gradeComputationMethod').value = courseGradeComputationMethod;
             document.getElementById('passingGradeInput').value = coursePassingGrade;
@@ -2792,6 +2791,9 @@ async function addAttendanceRecord(meetingNum, date, status) {
                         calculateMidtermGrade();
                         calculateFinalGrade();
                         calculateSemestralGrade();
+                        
+                        // Save the recalculated grades to the database
+                        saveAllGrades();
                     }
                 } else {
                     alert('Error saving grade weights: ' + data.message);
@@ -2879,6 +2881,24 @@ async function addAttendanceRecord(meetingNum, date, status) {
                 if (currentStudent) {
                     calculateMidtermGrade();
                     calculateFinalGrade();
+                    
+                    // Save the updated grades to the database
+                    saveAllGrades();
+                }
+            });
+            
+            passingGradeInput.addEventListener('change', function() {
+                // Update the passing grade
+                coursePassingGrade = parseFloat(this.value);
+                
+                // Recalculate grades if a student is selected
+                if (currentStudent) {
+                    calculateMidtermGrade();
+                    calculateFinalGrade();
+                    calculateSemestralGrade();
+                    
+                    // Save the updated grades to the database
+                    saveAllGrades();
                 }
             });
         }

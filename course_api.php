@@ -169,6 +169,9 @@ switch ($method) {
         }
         
         try {
+            // Set default passing_grade and grade_computation_method if not provided
+            $passing_grade = isset($data['passing_grade']) ? $data['passing_grade'] : 75.00;
+            $grade_computation_method = isset($data['grade_computation_method']) ? $data['grade_computation_method'] : 'base_50';
             $stmt = $pdo->prepare("UPDATE courses SET passing_grade = ?, grade_computation_method = ? WHERE id = ? AND faculty_id = ?");
             $stmt->execute([
                 $data['passing_grade'] ?? 75.00,

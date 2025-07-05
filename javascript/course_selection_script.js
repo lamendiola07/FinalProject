@@ -34,7 +34,6 @@ function populateCoursesTable(courses) {
                 <div class="action-buttons">
                     <button class="view-btn" onclick="viewGradingSheet(${course.id})">View</button>
                     <button class="add-student-btn" onclick="openAddStudentModal(${course.id}, '${course.code}', '${course.section_code}')">Add Student</button>
-                    <button class="btn-settings" onclick="openSettingsModal(${course.id}, '${course.code}', '${course.section_code}')">Settings</button>
                     <button class="delete-btn" onclick="deleteCourse(${course.id}, '${course.code}', '${course.section_code}')">Delete</button>
                 </div>
             </td>
@@ -172,47 +171,6 @@ async function loadCourses() {
     }
 }
 
-// Function to add a new course
-async function addCourse(event) {
-    event.preventDefault();
-    
-    const courseCode = document.getElementById('courseCode').value;
-    const courseSubject = document.getElementById('courseSubject').value;
-    const courseSectionCode = document.getElementById('courseSectionCode').value;
-    const courseSchedule = document.getElementById('courseSchedule').value;
-    const courseSchoolYear = document.getElementById('courseSchoolYear').value;
-    const courseSemester = document.getElementById('courseSemester').value;
-    
-    try {
-        const response = await fetch('course_api.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                code: courseCode,
-                subject: courseSubject,
-                sectionCode: courseSectionCode,
-                schedule: courseSchedule,
-                schoolYear: courseSchoolYear,
-                semester: courseSemester
-            })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            closeAddCourseModal();
-            showSuccessMessage(data.message);
-            loadCourses();
-        } else {
-            alert('Error: ' + data.message);
-        }
-    } catch (error) {
-        alert('Error adding course: ' + error.message);
-    }
-}
-
 // Initialize page
 document.addEventListener('DOMContentLoaded', function() {
     // Load courses from server
@@ -220,6 +178,30 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Set up form submission handler
     document.getElementById('addCourseForm').addEventListener('submit', addCourse);
+    
+    // Add student form submission
+    const addStudentForm = document.getElementById('addStudentForm');
+    if (addStudentForm) {
+        addStudentForm.addEventListener('submit', addStudent);
+    }
+    
+    // Close modals when clicking outside
+    window.addEventListener('click', function(event) {
+        const addCourseModal = document.getElementById('addCourseModal');
+        const addStudentModal = document.getElementById('addStudentModal');
+        
+        if (event.target === addCourseModal) {
+            closeAddCourseModal();
+        }
+        
+        if (event.target === addStudentModal) {
+            closeAddStudentModal();
+        }
+    });
+    
+    // Initialize all modals to be hidden
+    document.getElementById('addCourseModal').style.display = 'none';
+    document.getElementById('addStudentModal').style.display = 'none';
 });
 
 // Close modal when clicking outside of it
@@ -249,6 +231,10 @@ window.deleteCourse = deleteCourse;
 window.resetFilters = resetFilters;
 window.openAddCourseModal = openAddCourseModal;
 window.closeAddCourseModal = closeAddCourseModal;
+window.openAddStudentModal = openAddStudentModal;
+window.closeAddStudentModal = closeAddStudentModal;
+window.addStudent = addStudent;
+// Settings functionality has been removed
 
 
 function logout() {
@@ -322,7 +308,11 @@ async function addStudent(event) {
 
 // Add event listener for the student form submission
 document.addEventListener('DOMContentLoaded', function() {
-    // Existing event listeners...
+    // Load courses from server
+    loadCourses();
+    
+    // Set up form submission handler
+    document.getElementById('addCourseForm').addEventListener('submit', addCourse);
     
     // Add student form submission
     const addStudentForm = document.getElementById('addStudentForm');
@@ -330,13 +320,29 @@ document.addEventListener('DOMContentLoaded', function() {
         addStudentForm.addEventListener('submit', addStudent);
     }
     
-    // Close add student modal when clicking outside
+    // Close modals when clicking outside
     window.addEventListener('click', function(event) {
+        const addCourseModal = document.getElementById('addCourseModal');
         const addStudentModal = document.getElementById('addStudentModal');
+        const settingsModal = document.getElementById('settingsModal');
+        
+        if (event.target === addCourseModal) {
+            closeAddCourseModal();
+        }
+        
         if (event.target === addStudentModal) {
             closeAddStudentModal();
         }
+        
+        if (event.target === settingsModal) {
+            closeSettingsModal();
+        }
     });
+    
+    // Initialize all modals to be hidden
+    document.getElementById('addCourseModal').style.display = 'none';
+    document.getElementById('addStudentModal').style.display = 'none';
+    document.getElementById('settingsModal').style.display = 'none';
 });
 
 // Export functions for global access
@@ -353,25 +359,45 @@ function resetFilters() {
 }
 
 // Add this to the addCourse function where the form data is collected
-function addCourse() {
-    // Existing code...
+async function addCourse(event) {  // Added 'async' keyword here
+    event.preventDefault();
     
-    const passingGrade = document.getElementById('passingGrade').value || 75;
-    const gradeComputationMethod = document.getElementById('gradeComputationMethod').value;
+    const courseCode = document.getElementById('courseCode').value;
+    const courseSubject = document.getElementById('courseSubject').value;
+    const courseSectionCode = document.getElementById('courseSectionCode').value;
+    const courseSchedule = document.getElementById('courseSchedule').value;
+    const courseSchoolYear = document.getElementById('courseSchoolYear').value;
+    const courseSemester = document.getElementById('courseSemester').value;
     
-    // Add to the data object
-    const data = {
-        code: courseCode,
-        subject: courseSubject,
-        sectionCode: sectionCode,
-        schedule: schedule,
-        schoolYear: schoolYear,
-        semester: semester,
-        passingGrade: passingGrade,
-        gradeComputationMethod: gradeComputationMethod
-    };
-    
-    // Rest of the existing code...
+    try {
+        const response = await fetch('course_api.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                code: courseCode,
+                subject: courseSubject,
+                sectionCode: courseSectionCode,
+                schedule: courseSchedule,
+                schoolYear: courseSchoolYear,
+                semester: courseSemester
+                // Removed passingGrade and gradeComputationMethod
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            closeAddCourseModal();
+            showSuccessMessage(data.message);
+            loadCourses();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    } catch (error) {
+        alert('Error adding course: ' + error.message);
+    }
 }
 
 // Settings Modal Functions

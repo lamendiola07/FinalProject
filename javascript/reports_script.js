@@ -85,6 +85,9 @@ async function generateCourseReport() {
                 return;
             }
             
+            // Get the passing grade for this course
+            const passingGrade = parseFloat(data.course.passing_grade) || 75.00;
+            
             data.students.forEach(student => {
                 // Calculate status based on computed grade
                 const computedGrade = parseFloat(student.computed_grade);
@@ -94,13 +97,21 @@ async function generateCourseReport() {
                 if (computedGrade !== null && !isNaN(computedGrade)) {
                     // Check if the grade is already in PUP format (1.00-5.00) or numerical format (0-100)
                     if (computedGrade <= 5.00 && computedGrade >= 1.00) {
-                        // It's in PUP format
-                        status = computedGrade <= 3.00 ? 'PASSED' : 'FAILED';
-                        statusColor = computedGrade <= 3.00 ? 'green' : 'red';
+                        // It's in PUP format (lower is better)
+                        // Convert passing grade to equivalent in PUP scale
+                        let equivalentPassing = 3.00; // Default for 75%
+                        if (passingGrade < 75) {
+                            equivalentPassing = 3.00 + ((75 - passingGrade) / 25);
+                        } else if (passingGrade > 75) {
+                            equivalentPassing = 3.00 - ((passingGrade - 75) / 25);
+                        }
+                        
+                        status = computedGrade <= equivalentPassing ? 'PASSED' : 'FAILED';
+                        statusColor = computedGrade <= equivalentPassing ? 'green' : 'red';
                     } else {
-                        // It's in numerical format
-                        status = computedGrade >= 75.00 ? 'PASSED' : 'FAILED';
-                        statusColor = computedGrade >= 75.00 ? 'green' : 'red';
+                        // It's in numerical format (higher is better)
+                        status = computedGrade >= passingGrade ? 'PASSED' : 'FAILED';
+                        statusColor = computedGrade >= passingGrade ? 'green' : 'red';
                     }
                 }
                 

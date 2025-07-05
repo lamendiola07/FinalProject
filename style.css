@@ -778,11 +778,14 @@ body {
     height: 100%;
     background-color: rgba(0,0,0,0.5);
     overflow-y: auto; /* Enable vertical scrolling for the entire modal if needed */
+    display: flex; /* Add flex display */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
 }
 
 .modal-content {
     background-color: #fefefe;
-    margin: 5% auto;
+    margin: 0 auto; /* Changed from 5% auto to 0 auto */
     padding: 30px;
     border-radius: 8px;
     width: 90%;

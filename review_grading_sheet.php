@@ -154,16 +154,21 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
+            display: flex; /* Add flex display */
+            align-items: center; /* Center vertically */
+            justify-content: center; /* Center horizontally */
         }
         
         .modal-content {
             background-color: #fefefe;
-            margin: 10% auto;
+            margin: 0 auto; /* Changed from 10% auto to 0 auto */
             padding: 30px;
             border: none;
             border-radius: 10px;
             width: 90%;
             max-width: 500px;
+            max-height: 80vh; /* Limit height to 80% of viewport height */
+            overflow-y: auto; /* Enable vertical scrolling for content */
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
             animation: modalSlideIn 0.3s ease-out;
         }
@@ -1263,8 +1268,8 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
     </div>
 
     <!-- Excel-like Manager Modal -->
-    <div id="excelManagerModal" class="modal" style="z-index: 1001;">
-        <div class="modal-content" style="width: 98%; max-width: 1400px; max-height: 80vh; overflow-y: auto;">
+    <div id="excelManagerModal" class="modal" style="z-index: 1001; display: none; align-items: center; justify-content: center;">
+        <div class="modal-content" style="width: 98%; max-width: 1400px; max-height: 80vh; overflow-y: auto; margin: 0 auto;">
             <div class="modal-header">
                 <h3 id="excelManagerTitle">Manage Items</h3>
                 <span class="close" onclick="closeExcelManager()">&times;</span>
@@ -2764,7 +2769,7 @@ async function addAttendanceRecord(meetingNum, date, status) {
             coursePassingGrade = parseFloat(document.getElementById('passingGradeInput').value);
             
             // Save to database
-            fetch('course_api.php', {
+            fetch('grade_weights_api.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -2827,12 +2832,69 @@ async function addAttendanceRecord(meetingNum, date, status) {
             
             const totalClassParticipation = (attendance + quiz + activity + assignment + recitation) * 100;
             document.getElementById('totalClassParticipationWeight').textContent = totalClassParticipation.toFixed(0) + '%';
+            
+            // Recalculate grades with the new weights if a student is selected
+            if (currentStudent) {
+                // Update gradeWeights object with current values
+                gradeWeights.attendance = attendance;
+                gradeWeights.quiz = quiz;
+                gradeWeights.activity = activity;
+                gradeWeights.assignment = assignment;
+                gradeWeights.recitation = recitation;
+                gradeWeights.exam = parseFloat(document.getElementById('examWeight').value) || 0;
+                
+                // Recalculate grades
+                calculateMidtermGrade();
+                calculateFinalGrade();
+            }
         }
         
+        // Function to setup grade input listeners
+        function setupGradeInputListeners() {
+            // Midterm grade inputs
+            document.getElementById('midtermQuizScore').addEventListener('input', calculateMidtermGrade);
+            document.getElementById('midtermActivityScore').addEventListener('input', calculateMidtermGrade);
+            document.getElementById('midtermAssignmentScore').addEventListener('input', calculateMidtermGrade);
+            document.getElementById('midtermRecitationScore').addEventListener('input', calculateMidtermGrade);
+            document.getElementById('midtermExamScore').addEventListener('input', calculateMidtermGrade);
+            
+            // Final grade inputs
+            document.getElementById('finalQuizScore').addEventListener('input', calculateFinalGrade);
+            document.getElementById('finalActivityScore').addEventListener('input', calculateFinalGrade);
+            document.getElementById('finalAssignmentScore').addEventListener('input', calculateFinalGrade);
+            document.getElementById('finalRecitationScore').addEventListener('input', calculateFinalGrade);
+            document.getElementById('finalExamScore').addEventListener('input', calculateFinalGrade);
+        }
+
+        // Function to setup computation method listener
+        function setupComputationMethodListener() {
+            const methodSelect = document.getElementById('gradeComputationMethod');
+            const passingGradeInput = document.getElementById('passingGradeInput');
+            
+            methodSelect.addEventListener('change', function() {
+                // Update the computation method
+                courseGradeComputationMethod = this.value;
+                
+                // Recalculate grades if a student is selected
+                if (currentStudent) {
+                    calculateMidtermGrade();
+                    calculateFinalGrade();
+                }
+            });
+        }
+
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
             loadCourseInfo();
             setupWeightInputListeners();
+            setupGradeInputListeners();
+            setupComputationMethodListener();
+            
+            // Hide all modals on page load
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                modal.style.display = 'none';
+            });
             
             const attendanceForm = document.getElementById('attendanceForm');
             const modal = document.getElementById('attendanceModal');
@@ -2842,6 +2904,9 @@ async function addAttendanceRecord(meetingNum, date, status) {
             window.onclick = function(event) {
                 if (event.target === modal) {
                     closeAttendanceModal();
+                }
+                if (event.target === gradeWeightsModal) {
+                    closeGradeWeightsModal();
                 }
             }
             

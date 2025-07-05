@@ -98,7 +98,7 @@ if (!isset($_SESSION['user_id'])) {
     </div>
 
     <!-- Add Course Modal -->
-    <div id="addCourseModal" class="modal">
+    <div id="addCourseModal" class="modal" style="display: none;">
         <div class="modal-content">
             <span class="close" onclick="closeAddCourseModal()">&times;</span>
             <h2>Add New Course</h2>
@@ -151,7 +151,7 @@ if (!isset($_SESSION['user_id'])) {
     </div>
 
     <!-- Add Student Modal -->
-    <div id="addStudentModal" class="modal">
+    <div id="addStudentModal" class="modal" style="display: none;">
         <div class="modal-content">
             <span class="close" onclick="closeAddStudentModal()">&times;</span>
             <h2>Add Student to Course</h2>
@@ -183,77 +183,55 @@ if (!isset($_SESSION['user_id'])) {
         </div>
     </div>
 
-    <!-- Settings Modal -->
-    <div id="settingsModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeSettingsModal()">&times;</span>
-            <h2>Course Settings</h2>
-            <form id="settingsForm" onsubmit="saveCourseSettings(event)">
-                <input type="hidden" id="settingsCourseId" name="courseId">
-                <input type="hidden" id="settingsCourseCode" name="courseCode">
-                <input type="hidden" id="settingsSectionCode" name="sectionCode">
-                
-                <div class="form-group course-info">
-                    <label>Course:</label>
-                    <span id="settingsCourseInfoDisplay"></span>
-                </div>
-                
-                <div class="form-group">
-                    <label for="settingsPassingGrade">Passing Grade</label>
-                    <input type="number" id="settingsPassingGrade" name="passingGrade" min="50" max="100" step="0.01" value="75.00" required>
-                    <small>Minimum grade required to pass this course</small>
-                </div>
-                
-                <div class="form-group">
-                    <label for="settingsGradeComputationMethod">Grade Computation Method</label>
-                    <select id="settingsGradeComputationMethod" name="gradeComputationMethod" required>
-                        <option value="base_50">Base 50 (50-100 scale)</option>
-                        <option value="base_0">Base 0 (0-100 scale)</option>
-                    </select>
-                    <small>Choose the base scale for grade computation. Base 50: Lowest possible grade is 50. Base 0: Lowest possible grade is 0.</small>
-                </div>
-                
-                <div class="form-buttons">
-                    <button type="button" class="btn-secondary" onclick="closeSettingsModal()">Cancel</button>
-                    <button type="submit" class="btn-primary">Save Settings</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    <!-- Settings Modal has been removed -->
 </div>
     
-    <script>
-        function logout() {
-            fetch('auth_handler.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    action: 'logout'
+        <script>
+            function logout() {
+                fetch('auth_handler.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'logout'
+                    })
                 })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    window.location.href = 'index.html';
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        }
-
-        function toggleUserDropdown() {
-            const dropdown = document.getElementById('userDropdown');
-            dropdown.classList.toggle('active');
-        }
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.user-info')) {
-                document.getElementById('userDropdown').classList.remove('active');
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = 'index.html';
+                    }
+                })
+                .catch(error => console.error('Error:', error));
             }
-        });
-    </script>
+        
+            function toggleUserDropdown() {
+                const dropdown = document.getElementById('userDropdown');
+                dropdown.classList.toggle('active');
+            }
+        
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.user-info')) {
+                    document.getElementById('userDropdown').classList.remove('active');
+                }
+            });
+            
+            // Close modals when clicking outside
+            window.addEventListener('click', function(event) {
+                const addCourseModal = document.getElementById('addCourseModal');
+                const addStudentModal = document.getElementById('addStudentModal');
+                
+                if (event.target === addCourseModal) {
+                    closeAddCourseModal();
+                }
+                
+                if (event.target === addStudentModal) {
+                    closeAddStudentModal();
+                }
+            });
+        </script>
     <script src="javascript/course_selection_script.js"></script>
 </body>
 </html>

@@ -74,17 +74,53 @@ switch ($method) {
                 $stmt->execute([$faculty_id]);
                 $averageGrade = $stmt->fetch()['average'];
                 
-                // Get pass rate (assuming passing grade is below 3.00)
+                // Get pass rate (using course-specific passing grade)
                 $stmt = $pdo->prepare("SELECT 
-                                     COUNT(CASE WHEN g.computed_grade <= 3.00 THEN 1 END) as passed,
-                                     COUNT(g.computed_grade) as total
+                                     c.id, c.passing_grade,
+                                     g.computed_grade,
+                                     COUNT(g.id) as total_grades
                                      FROM grades g 
                                      JOIN course_students cs ON g.course_student_id = cs.id 
                                      JOIN courses c ON cs.course_id = c.id 
-                                     WHERE c.faculty_id = ? AND g.computed_grade IS NOT NULL");
+                                     WHERE c.faculty_id = ? AND g.computed_grade IS NOT NULL
+                                     GROUP BY c.id, g.id");
                 $stmt->execute([$faculty_id]);
-                $passData = $stmt->fetch();
-                $passRate = $passData['total'] > 0 ? ($passData['passed'] / $passData['total']) * 100 : 0;
+                $gradeData = $stmt->fetchAll();
+                
+                $totalGrades = 0;
+                $passedGrades = 0;
+                
+                foreach ($gradeData as $grade) {
+                    $totalGrades++;
+                    $passingGrade = $grade['passing_grade'] ?? 75;
+                    
+                    // Check if the grade is in PUP format (1.00-5.00) or numerical format (0-100)
+                    if ($grade['computed_grade'] <= 5.00 && $grade['computed_grade'] >= 1.00) {
+                        // It's in PUP format (lower is better)
+                        $equivalentPassing = 3.00; // Default equivalent
+                        if ($passingGrade >= 50 && $passingGrade <= 100) {
+                            // Convert percentage passing grade to PUP scale
+                            // This is an approximation - adjust the formula as needed
+                            $equivalentPassing = 3.00; // Default for 75%
+                            if ($passingGrade < 75) {
+                                $equivalentPassing = 3.00 + ((75 - $passingGrade) / 25);
+                            } else if ($passingGrade > 75) {
+                                $equivalentPassing = 3.00 - (($passingGrade - 75) / 25);
+                            }
+                        }
+                        
+                        if ($grade['computed_grade'] <= $equivalentPassing) {
+                            $passedGrades++;
+                        }
+                    } else {
+                        // It's in numerical format (higher is better)
+                        if ($grade['computed_grade'] >= $passingGrade) {
+                            $passedGrades++;
+                        }
+                    }
+                }
+                
+                $passRate = $totalGrades > 0 ? ($passedGrades / $totalGrades) * 100 : 0;
                 
                 // Get all courses for dropdown
                 $stmt = $pdo->prepare("SELECT * FROM courses WHERE faculty_id = ? ORDER BY created_at DESC");

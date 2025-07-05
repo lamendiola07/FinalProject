@@ -1,6 +1,10 @@
 <?php
 require_once 'config.php';
 
+// Prevent any output before headers
+// Turn off error output that might corrupt JSON
+error_reporting(0);
+
 // Handle GET logout requests first
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'logout') {
     session_start();
@@ -18,7 +22,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$input = json_decode(file_get_contents('php://input'), true);
+// Get the raw input and decode it
+$input_json = file_get_contents('php://input');
+$input = json_decode($input_json, true);
+
+// Check if JSON is valid
+if ($input === null && json_last_error() !== JSON_ERROR_NONE) {
+    echo json_encode(['success' => false, 'message' => 'Invalid JSON: ' . json_last_error_msg()]);
+    exit;
+}
+
 $action = $input['action'] ?? '';
 
 switch ($action) {
@@ -131,10 +144,12 @@ function handleLogin($pdo, $data) {
 }
 
 function handleLogout() {
+    // Make sure we don't have any output before session_destroy
+    ob_start();
     session_start();
     session_destroy();
+    ob_end_clean();
+    
     echo json_encode(['success' => true, 'message' => 'Logged out successfully']);
 }
-
-// Remove the duplicate GET logout handler at the bottom
 ?>

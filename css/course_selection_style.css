@@ -977,10 +977,11 @@ body {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3 ease;
-    font-size: 12px; /* Reduced from 14px to match other action buttons */
-    min-width: 20px; /* Match the View and Delete buttons */
+    font-size: 12px; /* Match other action buttons */
+    min-width: 60px; /* Match the View and Delete buttons */
+    text-align: center;
 }
 
-.add-student-btn:hover {
-    background-color: #1e4e2d;
+.btn-settings:hover {
+    background-color: #0056b3; /* Darker blue on hover */
 }

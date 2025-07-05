@@ -279,6 +279,238 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
             margin-top: 5px;
             display: none;
         }
+        
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .btn-sm:hover {
+            background-color: #0056b3;
+        }
+        
+        .item-manager-content {
+            margin-bottom: 20px;
+        }
+        
+        .add-item-section {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .items-scores-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        
+        .items-scores-table th,
+        .items-scores-table td {
+            border: 1px solid #ddd;
+            padding: 6px;
+            text-align: center;
+        }
+        
+        .items-scores-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        
+        .items-scores-table input {
+            width: 60px;
+            padding: 2px;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+        
+        .summary-section {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        
+        .table-container {
+            position: relative;
+        }
+        
+        /* Excel-like table styles */
+        .excel-manager-content {
+            height: calc(95vh - 200px);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .excel-toolbar {
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .toolbar-info {
+            margin-left: auto;
+            font-weight: bold;
+            color: #666;
+        }
+        
+        .excel-table-container {
+            flex: 1;
+            overflow: auto;
+            border: 1px solid #ddd;
+            position: relative;
+        }
+        
+        .excel-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 12px;
+            background-color: white;
+        }
+        
+        .excel-table th,
+        .excel-table td {
+            border: 1px solid #ddd;
+            padding: 4px 6px;
+            text-align: center;
+            position: relative;
+            min-width: 80px;
+        }
+        
+        .excel-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .fixed-column {
+            position: sticky;
+            left: 0;
+            background-color: #f8f9fa !important;
+            z-index: 11;
+            min-width: 200px;
+            max-width: 200px;
+            text-align: left;
+            padding-left: 8px;
+        }
+        
+        .student-column {
+            font-weight: bold;
+        }
+        
+        .add-column {
+            background-color: #e3f2fd !important;
+            cursor: pointer;
+            color: #1976d2;
+            font-weight: bold;
+            min-width: 100px;
+        }
+        
+        .add-column:hover {
+            background-color: #bbdefb !important;
+        }
+        
+        .average-column {
+            background-color: #fff3e0 !important;
+            font-weight: bold;
+            min-width: 80px;
+        }
+        
+        .item-header {
+            background-color: #e8f5e8 !important;
+            position: relative;
+            min-width: 100px;
+        }
+        
+        .item-header input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            text-align: center;
+            font-weight: bold;
+            padding: 2px;
+        }
+        
+        .item-header .delete-btn {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 2px;
+            width: 16px;
+            height: 16px;
+            font-size: 10px;
+            cursor: pointer;
+            display: none;
+        }
+        
+        .item-header:hover .delete-btn {
+            display: block;
+        }
+        
+        .score-input {
+            width: 100%;
+            border: none;
+            text-align: center;
+            padding: 2px;
+            background: transparent;
+        }
+        
+        .score-input:focus {
+            background-color: #fff;
+            border: 2px solid #4CAF50;
+            outline: none;
+        }
+        
+        .excel-table tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .excel-table tbody tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+        
+        .average-cell {
+            font-weight: bold;
+            background-color: #fff3e0;
+        }
+        
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 12px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin: 2px;
+        }
+        
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn-success { background-color: #28a745; color: white; }
+        .btn-info { background-color: #17a2b8; color: white; }
+        .btn-danger { background-color: #dc3545; color: white; }
+        
+        .btn-sm:hover { opacity: 0.8; }
     </style>
 </head>
 <body>
@@ -447,53 +679,59 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
                             <span class="category-percentage">70%</span>
                         </div>
                         <table class="grades-table">
-                            <thead>
+                        <thead>
+                            <tr>
+                                <th>Component</th>
+                                <th>Weight</th>
+                                <th>Score</th>
+                                <th>Weighted Score</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Attendance</td>
+                                <td>10%</td>
+                                <td id="midtermAttendanceScore">0.00</td>
+                                <td id="midtermAttendanceWeighted">0.00</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>Quiz</td>
+                                <td>20%</td>
+                                <td>
+                                    <input type="number" class="grade-input" id="midtermQuizScore" min="0" max="100" step="0.01" value="0" onchange="calculateMidtermGrade()" readonly>
+                                </td>
+                                <td id="midtermQuizWeighted">0.00</td>
+                                <td><button class="btn btn-sm" onclick="openExcelManager('quiz', 'midterm')">Add Quiz</button></td>
+                            </tr>
+                            <tr>
+                                <td>Activity</td>
+                                <td>20%</td>
+                                <td>
+                                    <input type="number" class="grade-input" id="midtermActivityScore" min="0" max="100" step="0.01" value="0" onchange="calculateMidtermGrade()" readonly>
+                                </td>
+                                <td id="midtermActivityWeighted">0.00</td>
+                                <td><button class="btn btn-sm" onclick="openExcelManager('activity', 'midterm')">Add Activity</button></td>
+                            </tr>
+                            <tr>
+                                <td>Assignment</td>
+                                <td>10%</td>
+                                <td>
+                                    <input type="number" class="grade-input" id="midtermAssignmentScore" min="0" max="100" step="0.01" value="0" onchange="calculateMidtermGrade()" readonly>
+                                </td>
+                                <td id="midtermAssignmentWeighted">0.00</td>
+                                <td><button class="btn btn-sm" onclick="openExcelManager('assignment', 'midterm')">Add Assignment</button></td>
+                            </tr>
                                 <tr>
-                                    <th>Component</th>
-                                    <th>Weight</th>
-                                    <th>Score</th>
-                                    <th>Weighted Score</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Attendance</td>
-                                    <td>10%</td>
-                                    <td id="midtermAttendanceScore">0.00</td>
-                                    <td id="midtermAttendanceWeighted">0.00</td>
-                                </tr>
-                                <tr>
-                                    <td>Quiz</td>
-                                    <td>20%</td>
-                                    <td>
-                                        <input type="number" class="grade-input" id="midtermQuizScore" min="0" max="100" step="0.01" value="0" onchange="calculateMidtermGrade()">
-                                    </td>
-                                    <td id="midtermQuizWeighted">0.00</td>
-                                </tr>
-                                <tr>
-                                    <td>Activity</td>
-                                    <td>20%</td>
-                                    <td>
-                                        <input type="number" class="grade-input" id="midtermActivityScore" min="0" max="100" step="0.01" value="0" onchange="calculateMidtermGrade()">
-                                    </td>
-                                    <td id="midtermActivityWeighted">0.00</td>
-                                </tr>
-                                <tr>
-                                    <td>Assignment</td>
-                                    <td>10%</td>
-                                    <td>
-                                        <input type="number" class="grade-input" id="midtermAssignmentScore" min="0" max="100" step="0.01" value="0" onchange="calculateMidtermGrade()">
-                                    </td>
-                                    <td id="midtermAssignmentWeighted">0.00</td>
-                                </tr>
-                                <tr>
-                                    <td>Recitation</td>
-                                    <td>10%</td>
-                                    <td>
-                                        <input type="number" class="grade-input" id="midtermRecitationScore" min="0" max="100" step="0.01" value="0" onchange="calculateMidtermGrade()">
-                                    </td>
-                                    <td id="midtermRecitationWeighted">0.00</td>
-                                </tr>
+                                <td>Recitation</td>
+                                <td>10%</td>
+                                <td>
+                                    <input type="number" class="grade-input" id="midtermRecitationScore" min="0" max="100" step="0.01" value="0" onchange="calculateMidtermGrade()" readonly>
+                                </td>
+                                <td id="midtermRecitationWeighted">0.00</td>
+                                <td><button class="btn btn-sm" onclick="openExcelManager('recitation', 'midterm')">Add Recitation</button></td>
+                            </tr>
                                 <tr class="computed-total">
                                     <td colspan="3">Class Participation Total (70%)</td>
                                     <td id="midtermClassParticipationTotal">0.00</td>
@@ -515,6 +753,7 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
                                     <th>Weight</th>
                                     <th>Score</th>
                                     <th>Weighted Score</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -522,9 +761,10 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
                                     <td>Midterm Exam</td>
                                     <td>15%</td>
                                     <td>
-                                        <input type="number" class="grade-input" id="midtermExamScore" min="0" max="100" step="0.01" value="0" onchange="calculateMidtermGrade()">
+                                        <input type="number" class="grade-input" id="midtermExamScore" min="0" max="100" step="0.01" value="0" onchange="calculateMidtermGrade()" readonly>
                                     </td>
                                     <td id="midtermExamWeighted">0.00</td>
+                                    <td><button class="btn btn-sm" onclick="openExcelManager('exam', 'midterm')">Add Exam</button></td>
                                 </tr>
                                 <tr class="computed-total">
                                     <td colspan="3">Major Examination Total (15%)</td>
@@ -585,6 +825,7 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
                                     <th>Weight</th>
                                     <th>Score</th>
                                     <th>Weighted Score</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -593,38 +834,43 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
                                     <td>10%</td>
                                     <td id="finalAttendanceScore">0.00</td>
                                     <td id="finalAttendanceWeighted">0.00</td>
+                                    <td>-</td>
                                 </tr>
                                 <tr>
-                                    <td>Quiz</td>
-                                    <td>20%</td>
-                                    <td>
-                                        <input type="number" class="grade-input" id="finalQuizScore" min="0" max="100" step="0.01" value="0" onchange="calculateFinalGrade()">
-                                    </td>
-                                    <td id="finalQuizWeighted">0.00</td>
-                                </tr>
-                                <tr>
-                                    <td>Activity</td>
-                                    <td>20%</td>
-                                    <td>
-                                        <input type="number" class="grade-input" id="finalActivityScore" min="0" max="100" step="0.01" value="0" onchange="calculateFinalGrade()">
-                                    </td>
-                                    <td id="finalActivityWeighted">0.00</td>
-                                </tr>
-                                <tr>
-                                    <td>Assignment</td>
-                                    <td>10%</td>
-                                    <td>
-                                        <input type="number" class="grade-input" id="finalAssignmentScore" min="0" max="100" step="0.01" value="0" onchange="calculateFinalGrade()">
-                                    </td>
-                                    <td id="finalAssignmentWeighted">0.00</td>
-                                </tr>
+                                <td>Quiz</td>
+                                <td>20%</td>
+                                <td>
+                                    <input type="number" class="grade-input" id="finalQuizScore" min="0" max="100" step="0.01" value="0" onchange="calculateFinalGrade()" readonly>
+                                </td>
+                                <td id="finalQuizWeighted">0.00</td>
+                                <td><button class="btn btn-sm" onclick="openExcelManager('quiz', 'final')">Add Quiz</button></td>
+                            </tr>
+                            <tr>
+                                <td>Activity</td>
+                                <td>20%</td>
+                                <td>
+                                    <input type="number" class="grade-input" id="finalActivityScore" min="0" max="100" step="0.01" value="0" onchange="calculateFinalGrade()" readonly>
+                                </td>
+                                <td id="finalActivityWeighted">0.00</td>
+                                <td><button class="btn btn-sm" onclick="openExcelManager('activity', 'final')">Add Activity</button></td>
+                            </tr>
+                            <tr>
+                                <td>Assignment</td>
+                                <td>10%</td>
+                                <td>
+                                    <input type="number" class="grade-input" id="finalAssignmentScore" min="0" max="100" step="0.01" value="0" onchange="calculateFinalGrade()" readonly>
+                                </td>
+                                <td id="finalAssignmentWeighted">0.00</td>
+                                <td><button class="btn btn-sm" onclick="openExcelManager('assignment', 'final')">Add Assignment</button></td>
+                            </tr>
                                 <tr>
                                     <td>Recitation</td>
                                     <td>10%</td>
                                     <td>
-                                        <input type="number" class="grade-input" id="finalRecitationScore" min="0" max="100" step="0.01" value="0" onchange="calculateFinalGrade()">
+                                        <input type="number" class="grade-input" id="finalRecitationScore" min="0" max="100" step="0.01" value="0" onchange="calculateFinalGrade()" readonly>
                                     </td>
                                     <td id="finalRecitationWeighted">0.00</td>
+                                    <td><button class="btn btn-sm" onclick="openExcelManager('recitation', 'final')">Add Recitation</button></td>
                                 </tr>
                                 <tr class="computed-total">
                                     <td colspan="3">Class Participation Total (70%)</td>
@@ -647,6 +893,7 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
                                     <th>Weight</th>
                                     <th>Score</th>
                                     <th>Weighted Score</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -654,9 +901,10 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
                                     <td>Final Exam</td>
                                     <td>15%</td>
                                     <td>
-                                        <input type="number" class="grade-input" id="finalExamScore" min="0" max="100" step="0.01" value="0" onchange="calculateFinalGrade()">
+                                        <input type="number" class="grade-input" id="finalExamScore" min="0" max="100" step="0.01" value="0" onchange="calculateFinalGrade()" readonly>
                                     </td>
                                     <td id="finalExamWeighted">0.00</td>
+                                    <td><button class="btn btn-sm" onclick="openExcelManager('exam', 'final')">Add Exam</button></td>
                                 </tr>
                                 <tr class="computed-total">
                                     <td colspan="3">Major Examination Total (15%)</td>
@@ -759,7 +1007,120 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
         </div>
     </div>
 
+    <!-- Item Manager Modal -->
+    <div id="itemManagerModal" class="modal" style="z-index: 1001;">
+        <div class="modal-content" style="width: 95%; max-width: 1200px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h3 id="itemManagerTitle">Manage Items</h3>
+                <span class="close" onclick="closeItemManager()">&times;</span>
+            </div>
+            
+            <div class="item-manager-content">
+                <!-- Add New Item Section -->
+                <div class="add-item-section">
+                    <h4>Add New Item</h4>
+                    <form id="addItemForm">
+                        <div class="form-row">
+                            <div class="form-group" style="flex: 1; margin-right: 10px;">
+                                <label for="itemName">Item Name:</label>
+                                <input type="text" id="itemName" required>
+                            </div>
+                            <div class="form-group" style="flex: 1; margin-right: 10px;">
+                                <label for="itemMaxScore">Max Score:</label>
+                                <input type="number" id="itemMaxScore" min="1" value="100" required>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label for="itemDate">Date:</label>
+                                <input type="date" id="itemDate" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Item</button>
+                    </form>
+                </div>
+                
+                <!-- Items and Scores Table -->
+                <div class="items-table-section">
+                    <h4>Items and Student Scores</h4>
+                    <div class="table-container" style="max-height: 400px; overflow: auto;">
+                        <table class="items-scores-table" id="itemsScoresTable">
+                            <thead>
+                                <tr>
+                                    <th style="position: sticky; left: 0; background: #f2f2f2; z-index: 10;">Student</th>
+                                    <!-- Item columns will be added dynamically -->
+                                    <th style="background: #e9ecef;">Average</th>
+                                    <th style="background: #e9ecef;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="itemsScoresTableBody">
+                                <!-- Rows will be added dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Summary Section -->
+                <div class="summary-section">
+                    <h4>Summary</h4>
+                    <p>Current Average: <span id="currentAverage">0.00</span></p>
+                    <p>Total Items: <span id="totalItems">0</span></p>
+                </div>
+            </div>
+            
+            <div class="modal-buttons">
+                <button type="button" class="modal-btn secondary" onclick="closeItemManager()">Close</button>
+                <button type="button" class="modal-btn primary" onclick="saveItemScores()">Save All Scores</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Excel-like Manager Modal -->
+    <div id="excelManagerModal" class="modal" style="z-index: 1001;">
+        <div class="modal-content" style="width: 98%; max-width: 1400px; max-height: 95vh; overflow: hidden;">
+            <div class="modal-header">
+                <h3 id="excelManagerTitle">Manage Items</h3>
+                <span class="close" onclick="closeExcelManager()">&times;</span>
+            </div>
+            
+            <div class="excel-manager-content">
+                <!-- Toolbar -->
+                <div class="excel-toolbar">
+                    <button class="btn btn-primary" onclick="addNewItem()">+ Add New Item</button>
+                    <button class="btn btn-success" onclick="saveAllData()">💾 Save All</button>
+                    <button class="btn btn-info" onclick="refreshData()">🔄 Refresh</button>
+                    <span class="toolbar-info">Total Items: <span id="itemCount">0</span> | Students: <span id="studentCount">0</span></span>
+                </div>
+                
+                <!-- Excel-like Table Container -->
+                <div class="excel-table-container">
+                    <table class="excel-table" id="excelTable">
+                        <thead>
+                            <tr id="excelTableHeader">
+                                <th class="fixed-column student-column">Student Name</th>
+                                <th class="add-column" onclick="addNewItem()">+ Add Item</th>
+                                <th class="average-column">Average</th>
+                            </tr>
+                            <tr id="excelTableSubHeader">
+                                <th class="fixed-column"></th>
+                                <th class="add-column"></th>
+                                <th class="average-column"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="excelTableBody">
+                            <!-- Rows will be generated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="modal-buttons">
+                <button type="button" class="modal-btn secondary" onclick="closeExcelManager()">Close</button>
+                <button type="button" class="modal-btn primary" onclick="saveAllData()">Save All Changes</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+
         // Global variables
         let courseId = null;
         let studentData = [];
@@ -768,7 +1129,180 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
         let debounceTimers = {};
         let coursePassingGrade = 75.00;
         let courseGradeComputationMethod = 'base_50';
+        let currentItemType = '';
+        let currentTerm = '';
+        let currentItems = [];
+        let currentStudentScores = {};
 
+
+        // Function to open item manager
+        function openItemManager(itemType, term) {
+            if (!currentStudent) {
+                alert('Please select a student first');
+                return;
+            }
+            
+            currentItemType = itemType;
+            currentTerm = term;
+            
+            const modal = document.getElementById('itemManagerModal');
+            const title = document.getElementById('itemManagerTitle');
+            title.textContent = `Manage ${itemType.charAt(0).toUpperCase() + itemType.slice(1)}s - ${term.charAt(0).toUpperCase() + term.slice(1)} Term`;
+            
+            // Load items and scores
+            loadItemsAndScores();
+            
+            modal.style.display = 'block';
+        }
+        
+        // Function to close item manager
+        function closeItemManager() {
+            const modal = document.getElementById('itemManagerModal');
+            modal.style.display = 'none';
+            document.getElementById('addItemForm').reset();
+        }
+        
+        // Function to load items and scores
+        async function loadItemsAndScores() {
+            try {
+                // Load items for this course, term, and type
+                const itemsResponse = await fetch(`items_api.php?action=get_items&course_id=${courseId}&term=${currentTerm}&type=${currentItemType}`);
+                const itemsData = await itemsResponse.json();
+                
+                if (itemsData.success) {
+                    currentItems = itemsData.items;
+                } else {
+                    currentItems = [];
+                }
+                
+                // Load scores for all students
+                const scoresResponse = await fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=${currentTerm}&type=${currentItemType}`);
+                const scoresData = await scoresResponse.json();
+                
+                if (scoresData.success) {
+                    currentStudentScores = scoresData.scores;
+                } else {
+                    currentStudentScores = {};
+                }
+                
+                // Render the table
+                renderItemsTable();
+                updateSummary();
+                
+            } catch (error) {
+                console.error('Error loading items and scores:', error);
+                alert('Error loading data: ' + error.message);
+            }
+        }
+        
+        // Function to render items table
+        function renderItemsTable() {
+            const table = document.getElementById('itemsScoresTable');
+            const thead = table.querySelector('thead tr');
+            const tbody = document.getElementById('itemsScoresTableBody');
+            
+            // Clear existing content
+            thead.innerHTML = '<th style="position: sticky; left: 0; background: #f2f2f2; z-index: 10;">Student</th>';
+            tbody.innerHTML = '';
+            
+            // Add item columns
+            currentItems.forEach(item => {
+                const th = document.createElement('th');
+                th.innerHTML = `${item.name}<br><small>(${item.max_score} pts)</small><br><button class="btn btn-sm" onclick="deleteItem(${item.id})" style="background: #dc3545; margin-top: 2px;">Delete</button>`;
+                thead.appendChild(th);
+            });
+            
+            // Add average and actions columns
+            thead.innerHTML += '<th style="background: #e9ecef;">Average</th>';
+            
+            // Add student rows
+            studentData.forEach(student => {
+                const row = document.createElement('tr');
+                
+                // Student name column
+                const nameCell = document.createElement('td');
+                nameCell.style.cssText = 'position: sticky; left: 0; background: white; font-weight: bold; text-align: left; padding-left: 8px;';
+                nameCell.textContent = student.full_name;
+                row.appendChild(nameCell);
+                
+                // Score columns for each item
+                let totalScore = 0;
+                let totalMaxScore = 0;
+                
+                currentItems.forEach(item => {
+                    const scoreCell = document.createElement('td');
+                    const currentScore = currentStudentScores[student.student_number]?.[item.id] || 0;
+                    
+                    scoreCell.innerHTML = `<input type="number" min="0" max="${item.max_score}" step="0.01" value="${currentScore}" onchange="updateStudentScore('${student.student_number}', ${item.id}, this.value, ${item.max_score})">`;
+                    row.appendChild(scoreCell);
+                    
+                    totalScore += parseFloat(currentScore);
+                    totalMaxScore += parseFloat(item.max_score);
+                });
+                
+                // Average column
+                const avgCell = document.createElement('td');
+                const average = totalMaxScore > 0 ? (totalScore / totalMaxScore * 100) : 0;
+                avgCell.textContent = average.toFixed(2) + '%';
+                avgCell.style.fontWeight = 'bold';
+                row.appendChild(avgCell);
+                
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Function to update student score
+        function updateStudentScore(studentNumber, itemId, score, maxScore) {
+            if (!currentStudentScores[studentNumber]) {
+                currentStudentScores[studentNumber] = {};
+            }
+            
+            // Validate score
+            const numScore = parseFloat(score) || 0;
+            if (numScore > maxScore) {
+                alert(`Score cannot exceed ${maxScore}`);
+                return;
+            }
+            
+            currentStudentScores[studentNumber][itemId] = numScore;
+            
+            // Recalculate averages
+            renderItemsTable();
+            updateSummary();
+            
+            // Update the main grade if this is the current student
+            if (studentNumber === currentStudent.student_number) {
+                updateMainGradeFromItems();
+            }
+        }
+        
+        // Function to update main grade from items
+        function updateMainGradeFromItems() {
+            let totalScore = 0;
+            let totalMaxScore = 0;
+            
+            currentItems.forEach(item => {
+                const score = currentStudentScores[currentStudent.student_number]?.[item.id] || 0;
+                totalScore += parseFloat(score);
+                totalMaxScore += parseFloat(item.max_score);
+            });
+            
+            const average = totalMaxScore > 0 ? (totalScore / totalMaxScore * 100) : 0;
+            
+            // Update the appropriate grade input
+            const gradeInputId = `${currentTerm}${currentItemType.charAt(0).toUpperCase() + currentItemType.slice(1)}Score`;
+            const gradeInput = document.getElementById(gradeInputId);
+            if (gradeInput) {
+                gradeInput.value = average.toFixed(2);
+                
+                // Trigger grade calculation
+                if (currentTerm === 'midterm') {
+                    calculateMidtermGrade();
+                } else {
+                    calculateFinalGrade();
+                }
+            }
+        }
         // Function to toggle user dropdown
         function toggleUserDropdown() {
             const dropdown = document.getElementById('userDropdown');
@@ -1322,70 +1856,145 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
             });
         }
 
-        // Function to export to CSV with detailed information
-        function exportToCSV() {
+        // Enhanced CSV export function
+        async function exportToCSV() {
             if (studentData.length === 0) {
                 alert('No student data to export');
                 return;
             }
             
-            // Create detailed CSV content
-            let csvContent = 'Student Number,Full Name,First Grading,Second Grading,Computed Grade,Midterm Quiz,Midterm Activity,Midterm Assignment,Midterm Recitation,Midterm Exam,Final Quiz,Final Activity,Final Assignment,Final Recitation,Final Exam,Attendance Rate\n';
-            
-            // For each student, fetch their detailed data
-            const promises = studentData.map(student => {
-                return fetch(`detailed_grades_api.php?course_id=${courseId}&student_number=${student.student_number}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        let row = `${student.student_number},"${student.full_name}",${student.first_grade || ''},${student.second_grade || ''},${student.computed_grade || ''}`;
-                        
-                        if (data.success) {
-                            // Add detailed grades
-                            const gradeComponents = ['quiz', 'activity', 'assignment', 'recitation', 'exam'];
-                            const terms = ['midterm', 'final'];
-                            
-                            terms.forEach(term => {
-                                gradeComponents.forEach(component => {
-                                    const grade = data.grades.find(g => g.term === term && g.component === component);
-                                    row += `,${grade ? grade.score : ''}`;
-                                });
-                            });
-                            
-                            // Calculate attendance rate
-                            if (data.attendance.length > 0) {
-                                const presentCount = data.attendance.filter(a => a.status === 'present').length;
-                                const attendanceRate = ((presentCount / data.attendance.length) * 100).toFixed(2);
-                                row += `,${attendanceRate}%`;
-                            } else {
-                                row += `,N/A`;
-                            }
-                        } else {
-                            // Add empty columns for detailed grades and attendance
-                            row += ',,,,,,,,,,,N/A';
-                        }
-                        
-                        return row;
-                    })
-                    .catch(() => {
-                        // If error, add basic info with empty detailed columns
-                        return `${student.student_number},"${student.full_name}",${student.first_grade || ''},${student.second_grade || ''},${student.computed_grade || ''},,,,,,,,,,,N/A`;
-                    });
-            });
-            
-            Promise.all(promises).then(rows => {
-                csvContent += rows.join('\n');
+            try {
+                // Get all individual items for both terms
+                const [midtermQuizzes, midtermActivities, midtermAssignments, finalQuizzes, finalActivities, finalAssignments] = await Promise.all([
+                    fetch(`items_api.php?action=get_items&course_id=${courseId}&term=midterm&type=quiz`).then(r => r.json()),
+                    fetch(`items_api.php?action=get_items&course_id=${courseId}&term=midterm&type=activity`).then(r => r.json()),
+                    fetch(`items_api.php?action=get_items&course_id=${courseId}&term=midterm&type=assignment`).then(r => r.json()),
+                    fetch(`items_api.php?action=get_items&course_id=${courseId}&term=final&type=quiz`).then(r => r.json()),
+                    fetch(`items_api.php?action=get_items&course_id=${courseId}&term=final&type=activity`).then(r => r.json()),
+                    fetch(`items_api.php?action=get_items&course_id=${courseId}&term=final&type=assignment`).then(r => r.json())
+                ]);
                 
-                // Create download link
+                // Build CSV header
+                let csvContent = 'Student Number,Full Name,First Grading,Second Grading,Computed Grade';
+                
+                // Add midterm item headers
+                if (midtermQuizzes.success) {
+                    midtermQuizzes.items.forEach(item => {
+                        csvContent += `,Midterm Quiz: ${item.name} (${item.max_score}pts)`;
+                    });
+                }
+                if (midtermActivities.success) {
+                    midtermActivities.items.forEach(item => {
+                        csvContent += `,Midterm Activity: ${item.name} (${item.max_score}pts)`;
+                    });
+                }
+                if (midtermAssignments.success) {
+                    midtermAssignments.items.forEach(item => {
+                        csvContent += `,Midterm Assignment: ${item.name} (${item.max_score}pts)`;
+                    });
+                }
+                
+                // Add final item headers
+                if (finalQuizzes.success) {
+                    finalQuizzes.items.forEach(item => {
+                        csvContent += `,Final Quiz: ${item.name} (${item.max_score}pts)`;
+                    });
+                }
+                if (finalActivities.success) {
+                    finalActivities.items.forEach(item => {
+                        csvContent += `,Final Activity: ${item.name} (${item.max_score}pts)`;
+                    });
+                }
+                if (finalAssignments.success) {
+                    finalAssignments.items.forEach(item => {
+                        csvContent += `,Final Assignment: ${item.name} (${item.max_score}pts)`;
+                    });
+                }
+                
+                csvContent += ',Midterm Quiz Avg,Midterm Activity Avg,Midterm Assignment Avg,Final Quiz Avg,Final Activity Avg,Final Assignment Avg,Attendance Rate\n';
+                
+                // Add student data
+                for (const student of studentData) {
+                    let row = `${student.student_number},"${student.full_name}",${student.first_grade || ''},${student.second_grade || ''},${student.computed_grade || ''}`;
+                    
+                    // Get individual scores for this student
+                    const [mQuizScores, mActivityScores, mAssignmentScores, fQuizScores, fActivityScores, fAssignmentScores] = await Promise.all([
+                        fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=midterm&type=quiz`).then(r => r.json()),
+                        fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=midterm&type=activity`).then(r => r.json()),
+                        fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=midterm&type=assignment`).then(r => r.json()),
+                        fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=final&type=quiz`).then(r => r.json()),
+                        fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=final&type=activity`).then(r => r.json()),
+                        fetch(`items_api.php?action=get_scores&course_id=${courseId}&term=final&type=assignment`).then(r => r.json())
+                    ]);
+                    
+                    // Add individual item scores
+                    const addItemScores = (items, scores) => {
+                        if (items.success && items.items) {
+                            items.items.forEach(item => {
+                                const score = scores.success ? (scores.scores[student.student_number]?.[item.id] || 0) : 0;
+                                row += `,${score}`;
+                            });
+                        }
+                    };
+                    
+                    addItemScores(midtermQuizzes, mQuizScores);
+                    addItemScores(midtermActivities, mActivityScores);
+                    addItemScores(midtermAssignments, mAssignmentScores);
+                    addItemScores(finalQuizzes, fQuizScores);
+                    addItemScores(finalActivities, fActivityScores);
+                    addItemScores(finalAssignments, fAssignmentScores);
+                    
+                    // Calculate and add averages
+                    const calculateAverage = (items, scores) => {
+                        if (!items.success || !items.items || items.items.length === 0) return 0;
+                        let total = 0, maxTotal = 0;
+                        items.items.forEach(item => {
+                            const score = scores.success ? (scores.scores[student.student_number]?.[item.id] || 0) : 0;
+                            total += parseFloat(score);
+                            maxTotal += parseFloat(item.max_score);
+                        });
+                        return maxTotal > 0 ? (total / maxTotal * 100) : 0;
+                    };
+                    
+                    row += `,${calculateAverage(midtermQuizzes, mQuizScores).toFixed(2)}`;
+                    row += `,${calculateAverage(midtermActivities, mActivityScores).toFixed(2)}`;
+                    row += `,${calculateAverage(midtermAssignments, mAssignmentScores).toFixed(2)}`;
+                    row += `,${calculateAverage(finalQuizzes, fQuizScores).toFixed(2)}`;
+                    row += `,${calculateAverage(finalActivities, fActivityScores).toFixed(2)}`;
+                    row += `,${calculateAverage(finalAssignments, fAssignmentScores).toFixed(2)}`;
+                    
+                    // Add attendance rate
+                    try {
+                        const attendanceResponse = await fetch(`detailed_grades_api.php?course_id=${courseId}&student_number=${student.student_number}`);
+                        const attendanceData = await attendanceResponse.json();
+                        if (attendanceData.success && attendanceData.attendance.length > 0) {
+                            const presentCount = attendanceData.attendance.filter(a => a.status === 'present').length;
+                            const attendanceRate = ((presentCount / attendanceData.attendance.length) * 100).toFixed(2);
+                            row += `,${attendanceRate}%`;
+                        } else {
+                            row += `,N/A`;
+                        }
+                    } catch {
+                        row += `,N/A`;
+                    }
+                    
+                    csvContent += row + '\n';
+                }
+                
+                // Create and download CSV
                 const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.setAttribute('href', url);
-                link.setAttribute('download', 'detailed_grading_sheet.csv');
+                link.setAttribute('download', `detailed_grading_sheet_${new Date().toISOString().split('T')[0]}.csv`);
                 link.style.visibility = 'hidden';
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
-            });
+                
+            } catch (error) {
+                alert('Error exporting CSV: ' + error.message);
+            }
         }
 
         function showSaveIndicator() {
@@ -1415,6 +2024,424 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
                 // Base 50: Score can't be lower than 50
                 return Math.max(50, rawScore);
             }
+        }
+
+        // Excel Manager Variables
+        let excelCurrentType = '';
+        let excelCurrentTerm = '';
+        let excelItems = [];
+        let excelStudents = [];
+        let excelScores = {};
+        let isDataModified = false;
+        
+        // Open Excel Manager
+        function openExcelManager(itemType, term) {
+            if (!currentStudent) {
+                alert('Please select a student first');
+                return;
+            }
+            
+            excelCurrentType = itemType;
+            excelCurrentTerm = term;
+            
+            const modal = document.getElementById('excelManagerModal');
+            const title = document.getElementById('excelManagerTitle');
+            title.textContent = `Manage ${itemType.charAt(0).toUpperCase() + itemType.slice(1)}s - ${term.charAt(0).toUpperCase() + term.slice(1)} Term`;
+            
+            loadExcelData();
+            modal.style.display = 'block';
+        }
+        
+        // Close Excel Manager
+        function closeExcelManager() {
+            if (isDataModified) {
+                if (!confirm('You have unsaved changes. Are you sure you want to close?')) {
+                    return;
+                }
+            }
+            
+            const modal = document.getElementById('excelManagerModal');
+            modal.style.display = 'none';
+            isDataModified = false;
+        }
+        
+        // Load Excel Data
+        async function loadExcelData() {
+            try {
+                const response = await fetch(`items_api.php?action=get_all_data&course_id=${courseId}&term=${excelCurrentTerm}&type=${excelCurrentType}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    excelItems = data.items;
+                    excelStudents = data.students;
+                    excelScores = data.scores;
+                    
+                    renderExcelTable();
+                    updateExcelCounts();
+                } else {
+                    alert('Error loading data: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error loading data: ' + error.message);
+            }
+        }
+        
+        // Render Excel Table
+        function renderExcelTable() {
+            const table = document.getElementById('excelTable');
+            const header = document.getElementById('excelTableHeader');
+            const subHeader = document.getElementById('excelTableSubHeader');
+            const tbody = document.getElementById('excelTableBody');
+            
+            // Clear existing content
+            header.innerHTML = '<th class="fixed-column student-column">Student Name</th>';
+            subHeader.innerHTML = '<th class="fixed-column"></th>';
+            tbody.innerHTML = '';
+            
+            // Add item columns
+            excelItems.forEach((item, index) => {
+                const th = document.createElement('th');
+                th.className = 'item-header';
+                th.innerHTML = `
+                    <input type="text" value="${item.name}" onchange="updateItemName(${item.id}, this.value)" title="Item Name">
+                    <button class="delete-btn" onclick="deleteExcelItem(${item.id})" title="Delete Item">×</button>
+                `;
+                header.appendChild(th);
+                
+                const subTh = document.createElement('th');
+                subTh.className = 'item-header';
+                subTh.innerHTML = `
+                    <input type="number" value="${item.max_score}" onchange="updateItemMaxScore(${item.id}, this.value)" title="Max Score" style="width: 50px;">
+                    <input type="date" value="${item.date_given || ''}" onchange="updateItemDate(${item.id}, this.value)" title="Date" style="width: 100px; font-size: 10px;">
+                `;
+                subHeader.appendChild(subTh);
+            });
+            
+            // Add "Add Item" column
+            header.innerHTML += '<th class="add-column" onclick="addNewItem()">+ Add Item</th>';
+            subHeader.innerHTML += '<th class="add-column"></th>';
+            
+            // Add average column
+            header.innerHTML += '<th class="average-column">Average</th>';
+            subHeader.innerHTML += '<th class="average-column">%</th>';
+            
+            // Add student rows
+            excelStudents.forEach(student => {
+                const row = document.createElement('tr');
+                
+                // Student name column
+                const nameCell = document.createElement('td');
+                nameCell.className = 'fixed-column student-column';
+                nameCell.textContent = student.full_name;
+                row.appendChild(nameCell);
+                
+                // Score columns
+                let totalScore = 0;
+                let totalMaxScore = 0;
+                
+                excelItems.forEach(item => {
+                    const scoreCell = document.createElement('td');
+                    const currentScore = excelScores[student.student_number]?.[item.id] || 0;
+                    
+                    scoreCell.innerHTML = `<input type="number" class="score-input" min="0" max="${item.max_score}" step="0.01" value="${currentScore}" onchange="updateExcelScore('${student.student_number}', ${item.id}, this.value, ${item.max_score})">`;
+                    row.appendChild(scoreCell);
+                    
+                    totalScore += parseFloat(currentScore);
+                    totalMaxScore += parseFloat(item.max_score);
+                });
+                
+                // Add item column (empty)
+                const addCell = document.createElement('td');
+                addCell.className = 'add-column';
+                row.appendChild(addCell);
+                
+                // Average column
+                const avgCell = document.createElement('td');
+                avgCell.className = 'average-cell';
+                const average = totalMaxScore > 0 ? (totalScore / totalMaxScore * 100) : 0;
+                avgCell.textContent = average.toFixed(2) + '%';
+                row.appendChild(avgCell);
+                
+                tbody.appendChild(row);
+            });
+        }
+        
+        // Add New Item
+        async function addNewItem() {
+            const itemName = prompt('Enter item name:');
+            if (!itemName) return;
+            
+            const maxScore = prompt('Enter max score:', '100');
+            if (!maxScore || isNaN(maxScore)) return;
+            
+            const date = prompt('Enter date (YYYY-MM-DD):');
+            
+            try {
+                const response = await fetch('items_api.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'add_item',
+                        course_id: courseId,
+                        term: excelCurrentTerm,
+                        type: excelCurrentType,
+                        name: itemName,
+                        max_score: maxScore,
+                        date: date
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    await loadExcelData();
+                    isDataModified = true;
+                } else {
+                    alert('Error adding item: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error adding item: ' + error.message);
+            }
+        }
+        
+        // Update Excel Score
+        function updateExcelScore(studentNumber, itemId, score, maxScore) {
+            const numScore = parseFloat(score) || 0;
+            
+            if (numScore > maxScore) {
+                alert(`Score cannot exceed ${maxScore}`);
+                return;
+            }
+            
+            if (!excelScores[studentNumber]) {
+                excelScores[studentNumber] = {};
+            }
+            
+            excelScores[studentNumber][itemId] = numScore;
+            isDataModified = true;
+            
+            // Recalculate averages
+            renderExcelTable();
+            
+            // Update main grade if this is the current student
+            if (studentNumber === currentStudent.student_number) {
+                updateMainGradeFromExcel();
+            }
+        }
+        
+        // Update Item Name
+        async function updateItemName(itemId, newName) {
+            if (!newName.trim()) return;
+            
+            try {
+                const response = await fetch('items_api.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'update_item',
+                        item_id: itemId,
+                        type: excelCurrentType,
+                        name: newName,
+                        max_score: excelItems.find(item => item.id == itemId)?.max_score || 100,
+                        date: excelItems.find(item => item.id == itemId)?.date_given
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Update local data
+                    const item = excelItems.find(item => item.id == itemId);
+                    if (item) item.name = newName;
+                    isDataModified = true;
+                } else {
+                    alert('Error updating item: ' + data.message);
+                    await loadExcelData();
+                }
+            } catch (error) {
+                alert('Error updating item: ' + error.message);
+            }
+        }
+        
+        // Update Item Max Score
+        async function updateItemMaxScore(itemId, newMaxScore) {
+            const maxScore = parseFloat(newMaxScore);
+            if (isNaN(maxScore) || maxScore <= 0) return;
+            
+            try {
+                const item = excelItems.find(item => item.id == itemId);
+                const response = await fetch('items_api.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'update_item',
+                        item_id: itemId,
+                        type: excelCurrentType,
+                        name: item?.name || '',
+                        max_score: maxScore,
+                        date: item?.date_given
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Update local data
+                    if (item) item.max_score = maxScore;
+                    renderExcelTable();
+                    isDataModified = true;
+                } else {
+                    alert('Error updating item: ' + data.message);
+                    await loadExcelData();
+                }
+            } catch (error) {
+                alert('Error updating item: ' + error.message);
+            }
+        }
+        
+        // Update Item Date
+        async function updateItemDate(itemId, newDate) {
+            try {
+                const item = excelItems.find(item => item.id == itemId);
+                const response = await fetch('items_api.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'update_item',
+                        item_id: itemId,
+                        type: excelCurrentType,
+                        name: item?.name || '',
+                        max_score: item?.max_score || 100,
+                        date: newDate
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Update local data
+                    if (item) item.date_given = newDate;
+                    isDataModified = true;
+                } else {
+                    alert('Error updating item: ' + data.message);
+                    await loadExcelData();
+                }
+            } catch (error) {
+                alert('Error updating item: ' + error.message);
+            }
+        }
+        
+        // Delete Excel Item
+        async function deleteExcelItem(itemId) {
+            if (!confirm('Are you sure you want to delete this item? All scores will be lost.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('items_api.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'delete_item',
+                        item_id: itemId,
+                        type: excelCurrentType
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    await loadExcelData();
+                    updateMainGradeFromExcel();
+                    isDataModified = true;
+                } else {
+                    alert('Error deleting item: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error deleting item: ' + error.message);
+            }
+        }
+        
+        // Save All Data
+        async function saveAllData() {
+            try {
+                const response = await fetch('items_api.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'save_scores',
+                        course_id: courseId,
+                        term: excelCurrentTerm,
+                        type: excelCurrentType,
+                        scores: excelScores
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('All data saved successfully!');
+                    isDataModified = false;
+                    updateMainGradeFromExcel();
+                } else {
+                    alert('Error saving data: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error saving data: ' + error.message);
+            }
+        }
+        
+        // Refresh Data
+        async function refreshData() {
+            if (isDataModified) {
+                if (!confirm('You have unsaved changes. Are you sure you want to refresh?')) {
+                    return;
+                }
+            }
+            
+            await loadExcelData();
+            isDataModified = false;
+        }
+        
+        // Update Excel Counts
+        function updateExcelCounts() {
+            document.getElementById('itemCount').textContent = excelItems.length;
+            document.getElementById('studentCount').textContent = excelStudents.length;
+        }
+        
+        // Update Main Grade from Excel
+        function updateMainGradeFromExcel() {
+            if (!currentStudent || excelItems.length === 0) return;
+            
+            let totalScore = 0;
+            let totalMaxScore = 0;
+            
+            excelItems.forEach(item => {
+                const score = excelScores[currentStudent.student_number]?.[item.id] || 0;
+                totalScore += parseFloat(score);
+                totalMaxScore += parseFloat(item.max_score);
+            });
+            
+            const average = totalMaxScore > 0 ? (totalScore / totalMaxScore * 100) : 0;
+            
+            // Update the appropriate grade input
+            const gradeInputId = `${excelCurrentTerm}${excelCurrentType.charAt(0).toUpperCase() + excelCurrentType.slice(1)}Score`;
+            const gradeInput = document.getElementById(gradeInputId);
+            if (gradeInput) {
+                gradeInput.value = average.toFixed(2);
+                
+                // Trigger grade calculation
+                if (excelCurrentTerm === 'midterm') {
+                    calculateMidtermGrade();
+                } else {
+                    calculateFinalGrade();
+                }
+            }
+        }
+        
+        // Function to open item manager (placeholder for now)
+        function openItemManager(component, term) {
+            alert(`Opening ${component} manager for ${term} term. This feature will be implemented in the next update.`);
         }
 
         // Initialize page
@@ -1475,7 +2502,136 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
                     errorMessage.style.display = 'none';
                 }
             });
+            // Add item form handler
+            const addItemForm = document.getElementById('addItemForm');
+            if (addItemForm) {
+                addItemForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const itemName = document.getElementById('itemName').value;
+                    const maxScore = document.getElementById('itemMaxScore').value;
+                    const itemDate = document.getElementById('itemDate').value;
+                    
+                    try {
+                        const response = await fetch('items_api.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                action: 'add_item',
+                                course_id: courseId,
+                                term: currentTerm,
+                                type: currentItemType,
+                                name: itemName,
+                                max_score: maxScore,
+                                date: itemDate
+                            })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            // Reload items and scores
+                            await loadItemsAndScores();
+                            
+                            // Reset form
+                            addItemForm.reset();
+                            document.getElementById('itemMaxScore').value = '100';
+                            
+                            alert('Item added successfully!');
+                        } else {
+                            alert('Error adding item: ' + data.message);
+                        }
+                    } catch (error) {
+                        alert('Error adding item: ' + error.message);
+                    }
+                });
+            }
         });
+
+        // Function to delete item
+        async function deleteItem(itemId) {
+            if (!confirm('Are you sure you want to delete this item? All associated scores will be lost.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('items_api.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'delete_item',
+                        item_id: itemId
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    await loadItemsAndScores();
+                    updateMainGradeFromItems();
+                    alert('Item deleted successfully!');
+                } else {
+                    alert('Error deleting item: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error deleting item: ' + error.message);
+            }
+        }
+        
+        // Function to save all item scores
+        async function saveItemScores() {
+            try {
+                const response = await fetch('items_api.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'save_scores',
+                        course_id: courseId,
+                        term: currentTerm,
+                        type: currentItemType,
+                        scores: currentStudentScores
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('All scores saved successfully!');
+                    closeItemManager();
+                } else {
+                    alert('Error saving scores: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error saving scores: ' + error.message);
+            }
+        }
+        
+        // Function to update summary
+        function updateSummary() {
+            document.getElementById('totalItems').textContent = currentItems.length;
+            
+            if (currentStudent && currentItems.length > 0) {
+                let totalScore = 0;
+                let totalMaxScore = 0;
+                
+                currentItems.forEach(item => {
+                    const score = currentStudentScores[currentStudent.student_number]?.[item.id] || 0;
+                    totalScore += parseFloat(score);
+                    totalMaxScore += parseFloat(item.max_score);
+                });
+                
+                const average = totalMaxScore > 0 ? (totalScore / totalMaxScore * 100) : 0;
+                document.getElementById('currentAverage').textContent = average.toFixed(2) + '%';
+            } else {
+                document.getElementById('currentAverage').textContent = '0.00%';
+            }
+        }
     </script>
 </body>
 </html>

@@ -2717,22 +2717,15 @@ async function addAttendanceRecord(meetingNum, date, status) {
             document.getElementById('assignmentWeight').value = gradeWeights.assignment;
             document.getElementById('recitationWeight').value = gradeWeights.recitation;
             document.getElementById('examWeight').value = gradeWeights.exam;
-            
-            // Update percentages
-            document.querySelectorAll('.weight-percentage').forEach((span, index) => {
-                const inputs = ['attendanceWeight', 'quizWeight', 'activityWeight', 'assignmentWeight', 'recitationWeight', 'examWeight'];
-                if (index < inputs.length) {
-                    const value = parseFloat(document.getElementById(inputs[index]).value) * 100;
-                    span.textContent = value.toFixed(0) + '%';
-                }
-            });
-            
-            // Update total class participation weight
-            const totalClassParticipation = (gradeWeights.attendance + gradeWeights.quiz + 
-                                           gradeWeights.activity + gradeWeights.assignment + 
-                                           gradeWeights.recitation) * 100;
-            document.getElementById('totalClassParticipationWeight').textContent = totalClassParticipation.toFixed(0) + '%';
-            
+    
+            // Trigger the update of all percentage labels
+            document.getElementById('attendanceWeight').dispatchEvent(new Event('input'));
+            document.getElementById('quizWeight').dispatchEvent(new Event('input'));
+            document.getElementById('activityWeight').dispatchEvent(new Event('input'));
+            document.getElementById('assignmentWeight').dispatchEvent(new Event('input'));
+            document.getElementById('recitationWeight').dispatchEvent(new Event('input'));
+            document.getElementById('examWeight').dispatchEvent(new Event('input'));
+    
             // Set computation method and passing grade
             document.getElementById('gradeComputationMethod').value = courseGradeComputationMethod;
             document.getElementById('passingGradeInput').value = coursePassingGrade;

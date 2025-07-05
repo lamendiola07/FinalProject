@@ -1,6 +1,15 @@
 <?php
 require_once 'config.php';
 
+// Handle GET logout requests first
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'logout') {
+    session_start();
+    session_destroy();
+    header('Location: index.html');
+    exit;
+}
+
+// Handle POST requests
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -121,13 +130,11 @@ function handleLogin($pdo, $data) {
     }
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action']) && $_GET['action'] === 'logout') {
-    session_destroy();
-    header('Location: index.html');
-    exit;
-}
 function handleLogout() {
+    session_start();
     session_destroy();
     echo json_encode(['success' => true, 'message' => 'Logged out successfully']);
 }
+
+// Remove the duplicate GET logout handler at the bottom
 ?>

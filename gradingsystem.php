@@ -92,6 +92,14 @@ error_log("Session data in gradingsystem.php: " . json_encode($_SESSION));
                     <div class="status-label">Schedule</div>
                     <div class="status-value" id="scheduleInfo">TBA</div>
                 </div>
+                <div class="status-item">
+                    <div class="status-label">Passing Grade</div>
+                    <div class="status-value" id="coursePassingGrade">75.00</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">Grade Computation</div>
+                    <div class="status-value" id="courseGradeMethod">Base 50</div>
+                </div>
             </div>
         </div>
     </div>
@@ -382,8 +390,3 @@ error_log("Session data in gradingsystem.php: " . json_encode($_SESSION));
 </script>
 </body>
 </html>
-<!-- Add this to the course info section -->
-<div class="course-settings">
-    <p><strong>Passing Grade:</strong> <span id="coursePassingGrade">75.00</span></p>
-    <p><strong>Grade Computation:</strong> <span id="courseGradeMethod">Base 50</span></p>
-</div>

@@ -142,23 +142,6 @@ if (!isset($_SESSION['user_id'])) {
                     </select>
                 </div>
                 
-                <div class="form-group">
-                    <!-- Add this inside the course form -->
-                    <div class="form-group">
-                        <label for="passingGrade">Passing Grade:</label>
-                        <input type="number" id="passingGrade" min="50" max="100" step="0.01" value="75.00" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="gradeComputationMethod">Grade Computation Method:</label>
-                        <select id="gradeComputationMethod" required>
-                            <option value="base_50">Base 50</option>
-                            <option value="base_0">Base 0</option>
-                        </select>
-                        <small class="form-text text-muted">Base 50: Lowest possible grade is 50. Base 0: Lowest possible grade is 0.</small>
-                    </div>
-                </div>
-                
                 <div class="form-buttons">
                     <button type="button" class="btn-secondary" onclick="closeAddCourseModal()">Cancel</button>
                     <button type="submit" class="btn-primary">Add Course</button>
@@ -167,7 +150,6 @@ if (!isset($_SESSION['user_id'])) {
         </div>
     </div>
 
-    <!-- Add Student Modal -->
     <!-- Add Student Modal -->
     <div id="addStudentModal" class="modal">
         <div class="modal-content">
@@ -196,6 +178,44 @@ if (!isset($_SESSION['user_id'])) {
                 <div class="form-buttons">
                     <button type="button" class="btn-secondary" onclick="closeAddStudentModal()">Cancel</button>
                     <button type="submit" class="btn-primary">Add Student</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeSettingsModal()">&times;</span>
+            <h2>Course Settings</h2>
+            <form id="settingsForm" onsubmit="saveCourseSettings(event)">
+                <input type="hidden" id="settingsCourseId" name="courseId">
+                <input type="hidden" id="settingsCourseCode" name="courseCode">
+                <input type="hidden" id="settingsSectionCode" name="sectionCode">
+                
+                <div class="form-group course-info">
+                    <label>Course:</label>
+                    <span id="settingsCourseInfoDisplay"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="settingsPassingGrade">Passing Grade</label>
+                    <input type="number" id="settingsPassingGrade" name="passingGrade" min="50" max="100" step="0.01" value="75.00" required>
+                    <small>Minimum grade required to pass this course</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="settingsGradeComputationMethod">Grade Computation Method</label>
+                    <select id="settingsGradeComputationMethod" name="gradeComputationMethod" required>
+                        <option value="base_50">Base 50 (50-100 scale)</option>
+                        <option value="base_0">Base 0 (0-100 scale)</option>
+                    </select>
+                    <small>Choose the base scale for grade computation. Base 50: Lowest possible grade is 50. Base 0: Lowest possible grade is 0.</small>
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="button" class="btn-secondary" onclick="closeSettingsModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Settings</button>
                 </div>
             </form>
         </div>

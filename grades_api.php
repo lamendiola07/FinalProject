@@ -198,14 +198,31 @@ switch ($method) {
             $stmt->execute([$course_student_id]);
             $grade = $stmt->fetch();
             
+            // Get course settings for grade computation
+            $stmt = $pdo->prepare("SELECT passing_grade, grade_computation_method FROM courses WHERE id = ?");
+            $stmt->execute([$data['course_id']]);
+            $course_settings = $stmt->fetch();
+            
             // Calculate computed grade if both first and second grades are available
             $first_grade = isset($data['first_grade']) ? $data['first_grade'] : ($grade ? $grade['first_grade'] : null);
             $second_grade = isset($data['second_grade']) ? $data['second_grade'] : ($grade ? $grade['second_grade'] : null);
             $computed_grade = null;
             
             if ($first_grade !== null && $second_grade !== null) {
-                // Simple average calculation - you can modify this formula as needed
-                $computed_grade = ($first_grade + $second_grade) / 2;
+                // Get the grade computation method (default to base_50 if not set)
+                $computation_method = $course_settings ? $course_settings['grade_computation_method'] : 'base_50';
+                
+                if ($computation_method === 'base_0') {
+                    // Base 0: Simple average (0-100 scale)
+                    $computed_grade = ($first_grade + $second_grade) / 2;
+                } else {
+                    // Base 50: 50% performance = 75 grade points
+                    // Formula: grade = 50 + (performance_percentage / 2)
+                    // This maps 0% -> 50, 50% -> 75, 100% -> 100
+                    $average_performance = ($first_grade + $second_grade) / 2;
+                    $computed_grade = 50 + ($average_performance / 2);
+                }
+                
                 $computed_grade = round($computed_grade, 2);
             }
             

@@ -22,13 +22,6 @@ function populateCoursesTable(courses) {
     const tableBody = document.getElementById('coursesTableBody');
     tableBody.innerHTML = '';
 
-    if (courses.length === 0) {
-        const row = document.createElement('tr');
-        row.innerHTML = '<td colspan="6" style="text-align: center; padding: 20px; color: #666;">No courses found matching the selected criteria.</td>';
-        tableBody.appendChild(row);
-        return;
-    }
-
     courses.forEach((course, index) => {
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -41,6 +34,7 @@ function populateCoursesTable(courses) {
                 <div class="action-buttons">
                     <button class="view-btn" onclick="viewGradingSheet(${course.id})">View</button>
                     <button class="add-student-btn" onclick="openAddStudentModal(${course.id}, '${course.code}', '${course.section_code}')">Add Student</button>
+                    <button class="btn-settings" onclick="openSettingsModal(${course.id}, '${course.code}', '${course.section_code}')">Settings</button>
                     <button class="delete-btn" onclick="deleteCourse(${course.id}, '${course.code}', '${course.section_code}')">Delete</button>
                 </div>
             </td>
@@ -208,13 +202,8 @@ async function addCourse(event) {
         const data = await response.json();
         
         if (data.success) {
-            // Close modal and reset form
             closeAddCourseModal();
-            
-            // Show success message
             showSuccessMessage(data.message);
-            
-            // Reload courses
             loadCourses();
         } else {
             alert('Error: ' + data.message);
@@ -384,3 +373,159 @@ function addCourse() {
     
     // Rest of the existing code...
 }
+
+// Settings Modal Functions
+function openSettingsModal(courseId, courseCode, sectionCode) {
+    document.getElementById('settingsCourseId').value = courseId;
+    document.getElementById('settingsCourseCode').value = courseCode;
+    document.getElementById('settingsSectionCode').value = sectionCode;
+    document.getElementById('settingsCourseInfoDisplay').textContent = `${courseCode} - ${sectionCode}`;
+    
+    // Load current settings for this course
+    loadCourseSettings(courseId);
+    
+    document.getElementById('settingsModal').style.display = 'block';
+}
+
+function closeSettingsModal() {
+    document.getElementById('settingsModal').style.display = 'none';
+    document.getElementById('settingsForm').reset();
+}
+
+// Load course-specific settings
+async function loadCourseSettings(courseId) {
+    try {
+        const response = await fetch(`course_api.php?id=${courseId}`);
+        const data = await response.json();
+        
+        if (data.success && data.course) {
+            document.getElementById('settingsPassingGrade').value = data.course.passing_grade || 75;
+            document.getElementById('settingsGradeComputationMethod').value = data.course.grade_computation_method || 'base_50';
+        }
+    } catch (error) {
+        console.error('Error loading course settings:', error);
+    }
+}
+
+// Save course settings
+async function saveCourseSettings(event) {
+    event.preventDefault();
+    
+    const courseId = document.getElementById('settingsCourseId').value;
+    const passingGrade = document.getElementById('settingsPassingGrade').value;
+    const gradeComputationMethod = document.getElementById('settingsGradeComputationMethod').value;
+    
+    try {
+        const response = await fetch('course_api.php', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: courseId,
+                passing_grade: passingGrade,
+                grade_computation_method: gradeComputationMethod
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            closeSettingsModal();
+            showSuccessMessage('Course settings updated successfully!');
+            loadCourses(); // Refresh the course list
+        } else {
+            alert('Error: ' + data.message);
+        }
+    } catch (error) {
+        alert('Error saving settings: ' + error.message);
+    }
+}
+
+// Update the loadCourseGradingSettings function (around line 390)
+async function loadCourseGradingSettings(courseId) {
+    try {
+        const response = await fetch(`settings_api.php?course_id=${courseId}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            gradingSettings = data.settings;
+            
+            // Populate form with course settings
+            document.getElementById('passingGrade').value = gradingSettings.passing_grade;
+            document.getElementById('computationBase').value = gradingSettings.computation_base;
+            populateGradeScale(gradingSettings.grade_scale);
+        } else {
+            console.error('Error loading course settings:', data.message);
+            // Set default values
+            document.getElementById('passingGrade').value = 75;
+            document.getElementById('computationBase').value = 'base_50';
+            populateGradeScale([]);
+        }
+    } catch (error) {
+        console.error('Error loading course settings:', error);
+        // Set default values
+        document.getElementById('passingGrade').value = 75;
+        document.getElementById('computationBase').value = 'base_50';
+        populateGradeScale([]);
+    }
+}
+
+// Update the settings form submission (around line 415)
+document.addEventListener('DOMContentLoaded', function() {
+    const settingsForm = document.getElementById('settingsForm');
+    if (settingsForm) {
+        settingsForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const courseId = document.getElementById('settingsCourseId').value;
+            const passingGrade = parseFloat(document.getElementById('passingGrade').value);
+            const computationBase = document.getElementById('computationBase').value;
+            
+            // Collect grade scale entries
+            const gradeScaleEntries = [];
+            const entries = document.querySelectorAll('.grade-scale-entry');
+            
+            entries.forEach(entry => {
+                const min = parseFloat(entry.querySelector('.grade-min').value);
+                const max = parseFloat(entry.querySelector('.grade-max').value);
+                const equivalent = entry.querySelector('.grade-equivalent').value;
+                
+                if (!isNaN(min) && !isNaN(max) && equivalent) {
+                    gradeScaleEntries.push({ min, max, equivalent });
+                }
+            });
+            
+            // Sort by min score descending
+            gradeScaleEntries.sort((a, b) => b.min - a.min);
+            
+            try {
+                const response = await fetch('settings_api.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        course_id: courseId,
+                        passing_grade: passingGrade,
+                        computation_base: computationBase,
+                        grade_scale: gradeScaleEntries
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Course settings saved successfully!');
+                    closeSettingsModal();
+                    // Optionally reload courses to reflect changes
+                    loadCourses();
+                } else {
+                    alert('Error saving settings: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error saving settings: ' + error.message);
+            }
+        });
+    }
+});

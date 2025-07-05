@@ -408,6 +408,7 @@ body {
     height: 100%;
     background-color: rgba(0,0,0,0.5);
     animation: fadeIn 0.3s ease;
+    overflow-y: auto; /* Enable vertical scrolling for the entire modal if needed */
 }
 
 .modal-content {
@@ -417,6 +418,8 @@ body {
     border-radius: 8px;
     width: 90%;
     max-width: 600px;
+    max-height: 80vh; /* Limit height to 80% of viewport height */
+    overflow-y: auto; /* Enable vertical scrolling for content */
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     animation: slideIn 0.3s ease;
 }

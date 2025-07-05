@@ -511,6 +511,121 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
         .btn-danger { background-color: #dc3545; color: white; }
         
         .btn-sm:hover { opacity: 0.8; }
+        
+        /* Grade Weights Modal Styles */
+        .settings-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        .settings-section h4 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #700000;
+            font-size: 16px;
+        }
+        
+        .weight-percentage {
+            display: inline-block;
+            margin-left: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+        
+        .total-weight {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px dashed #ccc;
+            font-weight: bold;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn-primary {
+            background-color: #700000;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        /* Additional styles for the settings section */
+        .settings-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        
+        .settings-section h4 {
+            margin-top: 0;
+            color: #700000;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .form-group label {
+            width: 150px;
+            font-weight: bold;
+        }
+        
+        .form-group input, .form-group select {
+            width: 80px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .weight-percentage {
+            margin-left: 10px;
+            width: 50px;
+        }
+        
+        .total-weight {
+            font-weight: bold;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #ccc;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -551,6 +666,7 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
         <div class="button-group">
             <button class="btn btn-primary" onclick="exportToCSV()">Export to CSV</button>
             <button class="btn btn-secondary" onclick="window.location.href='gradingsystem.php?id=' + getUrlParameter('id') + '&code=' + getUrlParameter('code') + '&title=' + getUrlParameter('title') + '&section=' + getUrlParameter('section') + '&schedule=' + getUrlParameter('schedule') + '&schoolYear=' + getUrlParameter('schoolYear') + '&semester=' + getUrlParameter('semester')">Back</button>
+            <button class="btn btn-info" onclick="openGradeWeightsModal()">Adjust Grade Weights</button>
         </div>
 
         <div class="status-section">
@@ -1009,7 +1125,7 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
 
     <!-- Item Manager Modal -->
     <div id="itemManagerModal" class="modal" style="z-index: 1001;">
-        <div class="modal-content" style="width: 95%; max-width: 1200px; max-height: 90vh; overflow-y: auto;">
+        <div class="modal-content" style="width: 95%; max-width: 1200px; max-height: 80vh; overflow-y: auto;">
             <div class="modal-header">
                 <h3 id="itemManagerTitle">Manage Items</h3>
                 <span class="close" onclick="closeItemManager()">&times;</span>
@@ -1073,15 +1189,88 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
         </div>
     </div>
 
+    <!-- Grade Weights Settings Modal -->
+    <div id="gradeWeightsModal" class="modal">
+        <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h3>Grade Component Weights</h3>
+                <span class="close" onclick="closeGradeWeightsModal()">&times;</span>
+            </div>
+            <form id="gradeWeightsForm" onsubmit="saveGradeWeights(event)">
+                <div class="settings-section">
+                    <h4>Class Participation Components (70%)</h4>
+                    <div class="form-group">
+                        <label for="attendanceWeight">Attendance Weight:</label>
+                        <input type="number" id="attendanceWeight" min="0" max="1" step="0.01" value="0.1" required>
+                        <span class="weight-percentage">10%</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="quizWeight">Quiz Weight:</label>
+                        <input type="number" id="quizWeight" min="0" max="1" step="0.01" value="0.2" required>
+                        <span class="weight-percentage">20%</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="activityWeight">Activity Weight:</label>
+                        <input type="number" id="activityWeight" min="0" max="1" step="0.01" value="0.2" required>
+                        <span class="weight-percentage">20%</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="assignmentWeight">Assignment Weight:</label>
+                        <input type="number" id="assignmentWeight" min="0" max="1" step="0.01" value="0.1" required>
+                        <span class="weight-percentage">10%</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="recitationWeight">Recitation Weight:</label>
+                        <input type="number" id="recitationWeight" min="0" max="1" step="0.01" value="0.1" required>
+                        <span class="weight-percentage">10%</span>
+                    </div>
+                    <div class="form-group total-weight">
+                        <label>Total Class Participation:</label>
+                        <span id="totalClassParticipationWeight">70%</span>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h4>Major Examination Component</h4>
+                    <div class="form-group">
+                        <label for="examWeight">Exam Weight:</label>
+                        <input type="number" id="examWeight" min="0" max="1" step="0.01" value="0.3" required>
+                        <span class="weight-percentage">30%</span>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h4>Grade Computation Base</h4>
+                    <div class="form-group">
+                        <label for="gradeComputationMethod">Computation Method:</label>
+                        <select id="gradeComputationMethod" required>
+                            <option value="base_50">Base 50 (50-100)</option>
+                            <option value="base_0">Base 0 (0-100)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="passingGradeInput">Passing Grade:</label>
+                        <input type="number" id="passingGradeInput" min="50" max="100" step="0.01" value="75.00" required>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" onclick="closeGradeWeightsModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Settings</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Excel-like Manager Modal -->
     <div id="excelManagerModal" class="modal" style="z-index: 1001;">
-        <div class="modal-content" style="width: 98%; max-width: 1400px; max-height: 95vh; overflow: hidden;">
+        <div class="modal-content" style="width: 98%; max-width: 1400px; max-height: 80vh; overflow-y: auto;">
             <div class="modal-header">
                 <h3 id="excelManagerTitle">Manage Items</h3>
                 <span class="close" onclick="closeExcelManager()">&times;</span>
             </div>
             
-            <div class="excel-manager-content">
+            <div class="excel-manager-content" style="height: calc(100% - 100px); display: flex; flex-direction: column;">
                 <!-- Toolbar -->
                 <div class="excel-toolbar">
                     <button class="btn btn-primary" onclick="addNewItem()">+ Add New Item</button>
@@ -1091,7 +1280,7 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
                 </div>
                 
                 <!-- Excel-like Table Container -->
-                <div class="excel-table-container">
+                <div class="excel-table-container" style="flex: 1; overflow: auto; border: 1px solid #ddd;">
                     <table class="excel-table" id="excelTable">
                         <thead>
                             <tr id="excelTableHeader">
@@ -1120,6 +1309,11 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
     </div>
 
     <script>
+        // Helper function to format scores consistently
+        function formatScore(score) {
+            // If the score is a whole number, display it as an integer
+            return Number.isInteger(parseFloat(score)) ? parseInt(score) : parseFloat(score).toFixed(2);
+        }
 
         // Global variables
         let courseId = null;
@@ -1133,6 +1327,16 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
         let currentTerm = '';
         let currentItems = [];
         let currentStudentScores = {};
+        
+        // Grade component weights
+        let gradeWeights = {
+            attendance: 0.1,
+            quiz: 0.2,
+            activity: 0.2,
+            assignment: 0.1,
+            recitation: 0.1,
+            exam: 0.3
+        };
 
 
         // Function to open item manager
@@ -1372,10 +1576,25 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
                         coursePassingGrade = parseFloat(data.course.passing_grade) || 75.00;
                         courseGradeComputationMethod = data.course.grade_computation_method || 'base_50';
                         
+                        // Load grade weights if available
+                        if (data.course.grade_weights) {
+                            try {
+                                const weights = JSON.parse(data.course.grade_weights);
+                                if (weights) {
+                                    gradeWeights = weights;
+                                }
+                            } catch (e) {
+                                console.error('Error parsing grade weights:', e);
+                            }
+                        }
+                        
                         // Update UI to show current settings
                         document.getElementById('coursePassingGrade').textContent = coursePassingGrade;
                         document.getElementById('courseGradeMethod').textContent = 
                             courseGradeComputationMethod === 'base_50' ? 'Base 50' : 'Base 0';
+                            
+                        // Update grade weights form
+                        updateGradeWeightsForm();
                     }
                 })
                 .catch(error => console.error('Error loading course settings:', error));
@@ -1533,34 +1752,66 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
         }
 
         // Enhanced function to add attendance record
-        function addAttendanceRecord(meetingNum, date, status) {
-            // Check if meeting number already exists
-            const existingRecord = attendanceRecords.find(record => record.meeting === meetingNum);
-            if (existingRecord) {
-                const overwrite = confirm(`Meeting ${meetingNum} already exists. Do you want to overwrite it?`);
-                if (!overwrite) return false;
-                
-                // Remove the existing record
-                const index = attendanceRecords.findIndex(record => record.meeting === meetingNum);
-                attendanceRecords.splice(index, 1);
-            }
-            
-            // Add the new record
-            attendanceRecords.push({
-                meeting: meetingNum,
-                date: date,
-                status: status
-            });
-            
-            // Sort attendance records by meeting number
-            attendanceRecords.sort((a, b) => a.meeting - b.meeting);
-            
-            // Update the table
-            updateAttendanceTable();
-            
-            console.log('Attendance records after adding:', attendanceRecords);
-            return true;
+async function addAttendanceRecord(meetingNum, date, status) {
+    // Check if meeting number already exists
+    const existingRecord = attendanceRecords.find(record => record.meeting === meetingNum);
+    if (existingRecord) {
+        const overwrite = confirm(`Meeting ${meetingNum} already exists. Do you want to overwrite it?`);
+        if (!overwrite) return false;
+        
+        // Remove the existing record
+        const index = attendanceRecords.findIndex(record => record.meeting === meetingNum);
+        attendanceRecords.splice(index, 1);
+    }
+    
+    // Add the new record
+    attendanceRecords.push({
+        meeting: meetingNum,
+        date: date,
+        status: status
+    });
+    
+    // Sort attendance records by meeting number
+    attendanceRecords.sort((a, b) => a.meeting - b.meeting);
+    
+    // Update the table
+    updateAttendanceTable();
+    
+    // Save the attendance record to the database immediately
+    try {
+        const attendanceData = [{
+            meeting_number: meetingNum,
+            meeting_date: date,
+            status: status
+        }];
+        
+        const response = await fetch('detailed_grades_api.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                course_id: courseId,
+                student_number: currentStudent.student_number,
+                grades: [], // No grades to update
+                attendance: attendanceData
+            })
+        });
+        
+        const data = await response.json();
+        if (!data.success) {
+            throw new Error(data.message);
         }
+        
+        console.log('Attendance record saved to database successfully');
+    } catch (error) {
+        console.error('Error saving attendance record:', error);
+        alert('Error saving attendance record: ' + error.message);
+    }
+    
+    console.log('Attendance records after adding:', attendanceRecords);
+    return true;
+}
 
         // Function to load grade data
         function loadGradeData() {
@@ -1627,7 +1878,7 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
         // Function to calculate midterm grade
         function calculateMidtermGrade() {
             // Get attendance score
-            const attendanceScore = parseFloat(document.getElementById('midtermAttendanceScore').textContent);
+            const attendanceScore = parseFloat(document.getElementById('midtermAttendanceScore').textContent) || 0;
             
             // Get component scores
             const quizScore = parseFloat(document.getElementById('midtermQuizScore').value) || 0;
@@ -1636,40 +1887,40 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
             const recitationScore = parseFloat(document.getElementById('midtermRecitationScore').value) || 0;
             const examScore = parseFloat(document.getElementById('midtermExamScore').value) || 0;
             
-            // Calculate weighted scores for class participation (70%)
-            const attendanceWeighted = (attendanceScore * 0.1);
-            const quizWeighted = (quizScore * 0.2);
-            const activityWeighted = (activityScore * 0.2);
-            const assignmentWeighted = (assignmentScore * 0.1);
-            const recitationWeighted = (recitationScore * 0.1);
+            // Calculate weighted scores using dynamic weights
+            const attendanceWeighted = (attendanceScore * gradeWeights.attendance);
+            const quizWeighted = (quizScore * gradeWeights.quiz);
+            const activityWeighted = (activityScore * gradeWeights.activity);
+            const assignmentWeighted = (assignmentScore * gradeWeights.assignment);
+            const recitationWeighted = (recitationScore * gradeWeights.recitation);
             
             // Update weighted score displays
-            document.getElementById('midtermAttendanceWeighted').textContent = attendanceWeighted.toFixed(2);
-            document.getElementById('midtermQuizWeighted').textContent = quizWeighted.toFixed(2);
-            document.getElementById('midtermActivityWeighted').textContent = activityWeighted.toFixed(2);
-            document.getElementById('midtermAssignmentWeighted').textContent = assignmentWeighted.toFixed(2);
-            document.getElementById('midtermRecitationWeighted').textContent = recitationWeighted.toFixed(2);
+            document.getElementById('midtermAttendanceWeighted').textContent = formatScore(attendanceWeighted);
+            document.getElementById('midtermQuizWeighted').textContent = formatScore(quizWeighted);
+            document.getElementById('midtermActivityWeighted').textContent = formatScore(activityWeighted);
+            document.getElementById('midtermAssignmentWeighted').textContent = formatScore(assignmentWeighted);
+            document.getElementById('midtermRecitationWeighted').textContent = formatScore(recitationWeighted);
             
             // Calculate class participation total
             const classParticipationTotal = attendanceWeighted + quizWeighted + activityWeighted + assignmentWeighted + recitationWeighted;
-            document.getElementById('midtermClassParticipationTotal').textContent = classParticipationTotal.toFixed(2);
-            document.getElementById('midtermClassParticipationSummary').textContent = classParticipationTotal.toFixed(2);
+            document.getElementById('midtermClassParticipationTotal').textContent = formatScore(classParticipationTotal);
+            document.getElementById('midtermClassParticipationSummary').textContent = formatScore(classParticipationTotal);
             
-            // Calculate weighted exam score (15% of 30%)
-            const examWeighted = (examScore * 0.15);
-            document.getElementById('midtermExamWeighted').textContent = examWeighted.toFixed(2);
-            document.getElementById('midtermExamTotal').textContent = examWeighted.toFixed(2);
-            document.getElementById('midtermExamSummary').textContent = examWeighted.toFixed(2);
+            // Calculate weighted exam score using dynamic weight
+            const examWeighted = (examScore * gradeWeights.exam);
+            document.getElementById('midtermExamWeighted').textContent = formatScore(examWeighted);
+            document.getElementById('midtermExamTotal').textContent = formatScore(examWeighted);
+            document.getElementById('midtermExamSummary').textContent = formatScore(examWeighted);
             
             // Calculate total midterm grade
             const totalMidtermGrade = classParticipationTotal + examWeighted;
-            document.getElementById('totalMidtermGrade').textContent = totalMidtermGrade.toFixed(2);
+            document.getElementById('totalMidtermGrade').textContent = formatScore(totalMidtermGrade);
             
             // Apply the grade computation method before rounding
             const adjustedGrade = applyGradeComputationMethod(totalMidtermGrade, 100);
 
             // Round the grade to the nearest whole number
-            const roundedMidtermGrade = Math.round(totalMidtermGrade);
+            const roundedMidtermGrade = Math.round(adjustedGrade);
             document.getElementById('roundedMidtermGrade').textContent = roundedMidtermGrade;
             document.getElementById('semestralMidtermGrade').textContent = roundedMidtermGrade;
             
@@ -1680,7 +1931,7 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
         // Function to calculate final grade
         function calculateFinalGrade() {
             // Get attendance score
-            const attendanceScore = parseFloat(document.getElementById('finalAttendanceScore').textContent);
+            const attendanceScore = parseFloat(document.getElementById('finalAttendanceScore').textContent) || 0;
             
             // Get component scores
             const quizScore = parseFloat(document.getElementById('finalQuizScore').value) || 0;
@@ -1689,37 +1940,40 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
             const recitationScore = parseFloat(document.getElementById('finalRecitationScore').value) || 0;
             const examScore = parseFloat(document.getElementById('finalExamScore').value) || 0;
             
-            // Calculate weighted scores for class participation (70%)
-            const attendanceWeighted = (attendanceScore * 0.1);
-            const quizWeighted = (quizScore * 0.2);
-            const activityWeighted = (activityScore * 0.2);
-            const assignmentWeighted = (assignmentScore * 0.1);
-            const recitationWeighted = (recitationScore * 0.1);
+            // Calculate weighted scores using dynamic weights
+            const attendanceWeighted = (attendanceScore * gradeWeights.attendance);
+            const quizWeighted = (quizScore * gradeWeights.quiz);
+            const activityWeighted = (activityScore * gradeWeights.activity);
+            const assignmentWeighted = (assignmentScore * gradeWeights.assignment);
+            const recitationWeighted = (recitationScore * gradeWeights.recitation);
             
             // Update weighted score displays
-            document.getElementById('finalAttendanceWeighted').textContent = attendanceWeighted.toFixed(2);
-            document.getElementById('finalQuizWeighted').textContent = quizWeighted.toFixed(2);
-            document.getElementById('finalActivityWeighted').textContent = activityWeighted.toFixed(2);
-            document.getElementById('finalAssignmentWeighted').textContent = assignmentWeighted.toFixed(2);
-            document.getElementById('finalRecitationWeighted').textContent = recitationWeighted.toFixed(2);
+            document.getElementById('finalAttendanceWeighted').textContent = formatScore(attendanceWeighted);
+            document.getElementById('finalQuizWeighted').textContent = formatScore(quizWeighted);
+            document.getElementById('finalActivityWeighted').textContent = formatScore(activityWeighted);
+            document.getElementById('finalAssignmentWeighted').textContent = formatScore(assignmentWeighted);
+            document.getElementById('finalRecitationWeighted').textContent = formatScore(recitationWeighted);
             
             // Calculate class participation total
             const classParticipationTotal = attendanceWeighted + quizWeighted + activityWeighted + assignmentWeighted + recitationWeighted;
-            document.getElementById('finalClassParticipationTotal').textContent = classParticipationTotal.toFixed(2);
-            document.getElementById('finalClassParticipationSummary').textContent = classParticipationTotal.toFixed(2);
+            document.getElementById('finalClassParticipationTotal').textContent = formatScore(classParticipationTotal);
+            document.getElementById('finalClassParticipationSummary').textContent = formatScore(classParticipationTotal);
             
-            // Calculate weighted exam score (15% of 30%)
-            const examWeighted = (examScore * 0.15);
-            document.getElementById('finalExamWeighted').textContent = examWeighted.toFixed(2);
-            document.getElementById('finalExamTotal').textContent = examWeighted.toFixed(2);
-            document.getElementById('finalExamSummary').textContent = examWeighted.toFixed(2);
+            // Calculate weighted exam score using dynamic weight
+            const examWeighted = (examScore * gradeWeights.exam);
+            document.getElementById('finalExamWeighted').textContent = formatScore(examWeighted);
+            document.getElementById('finalExamTotal').textContent = formatScore(examWeighted);
+            document.getElementById('finalExamSummary').textContent = formatScore(examWeighted);
             
             // Calculate total final grade
             const totalFinalGrade = classParticipationTotal + examWeighted;
-            document.getElementById('totalFinalGrade').textContent = totalFinalGrade.toFixed(2);
+            document.getElementById('totalFinalGrade').textContent = formatScore(totalFinalGrade);
+            
+            // Apply the grade computation method before rounding
+            const adjustedGrade = applyGradeComputationMethod(totalFinalGrade, 100);
             
             // Round the grade to the nearest whole number
-            const roundedFinalGrade = Math.round(totalFinalGrade);
+            const roundedFinalGrade = Math.round(adjustedGrade);
             document.getElementById('roundedFinalGrade').textContent = roundedFinalGrade;
             document.getElementById('semestralFinalGrade').textContent = roundedFinalGrade;
             
@@ -1734,7 +1988,7 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
             
             // Calculate semestral grade (average of midterm and final)
             const semestralGrade = (midtermGrade + finalGrade) / 2;
-            document.getElementById('semestralGrade').textContent = semestralGrade.toFixed(2);
+            document.getElementById('semestralGrade').textContent = formatScore(semestralGrade);
             
             // Get the equivalent grade based on the scale
             const equivalent = getGradeEquivalent(semestralGrade);
@@ -2159,7 +2413,7 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
                 const avgCell = document.createElement('td');
                 avgCell.className = 'average-cell';
                 const average = totalMaxScore > 0 ? (totalScore / totalMaxScore * 100) : 0;
-                avgCell.textContent = average.toFixed(2) + '%';
+                avgCell.textContent = formatScore(average) + '%';
                 row.appendChild(avgCell);
                 
                 tbody.appendChild(row);
@@ -2428,7 +2682,8 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
             const gradeInputId = `${excelCurrentTerm}${excelCurrentType.charAt(0).toUpperCase() + excelCurrentType.slice(1)}Score`;
             const gradeInput = document.getElementById(gradeInputId);
             if (gradeInput) {
-                gradeInput.value = average.toFixed(2);
+                // Use formatScore for display but keep precision for calculations
+                gradeInput.value = formatScore(average);
                 
                 // Trigger grade calculation
                 if (excelCurrentTerm === 'midterm') {
@@ -2444,12 +2699,151 @@ error_log("Session data in review_grading_sheet.php: " . json_encode($_SESSION))
             alert(`Opening ${component} manager for ${term} term. This feature will be implemented in the next update.`);
         }
 
+        // Grade Weights Modal Functions
+        function openGradeWeightsModal() {
+            updateGradeWeightsForm();
+            document.getElementById('gradeWeightsModal').style.display = 'block';
+        }
+        
+        function closeGradeWeightsModal() {
+            document.getElementById('gradeWeightsModal').style.display = 'none';
+        }
+        
+        function updateGradeWeightsForm() {
+            // Set current values in the form
+            document.getElementById('attendanceWeight').value = gradeWeights.attendance;
+            document.getElementById('quizWeight').value = gradeWeights.quiz;
+            document.getElementById('activityWeight').value = gradeWeights.activity;
+            document.getElementById('assignmentWeight').value = gradeWeights.assignment;
+            document.getElementById('recitationWeight').value = gradeWeights.recitation;
+            document.getElementById('examWeight').value = gradeWeights.exam;
+            
+            // Update percentages
+            document.querySelectorAll('.weight-percentage').forEach((span, index) => {
+                const inputs = ['attendanceWeight', 'quizWeight', 'activityWeight', 'assignmentWeight', 'recitationWeight', 'examWeight'];
+                if (index < inputs.length) {
+                    const value = parseFloat(document.getElementById(inputs[index]).value) * 100;
+                    span.textContent = value.toFixed(0) + '%';
+                }
+            });
+            
+            // Update total class participation weight
+            const totalClassParticipation = (gradeWeights.attendance + gradeWeights.quiz + 
+                                           gradeWeights.activity + gradeWeights.assignment + 
+                                           gradeWeights.recitation) * 100;
+            document.getElementById('totalClassParticipationWeight').textContent = totalClassParticipation.toFixed(0) + '%';
+            
+            // Set computation method and passing grade
+            document.getElementById('gradeComputationMethod').value = courseGradeComputationMethod;
+            document.getElementById('passingGradeInput').value = coursePassingGrade;
+        }
+        
+        function saveGradeWeights(event) {
+            event.preventDefault();
+            
+            // Get values from form
+            const attendance = parseFloat(document.getElementById('attendanceWeight').value);
+            const quiz = parseFloat(document.getElementById('quizWeight').value);
+            const activity = parseFloat(document.getElementById('activityWeight').value);
+            const assignment = parseFloat(document.getElementById('assignmentWeight').value);
+            const recitation = parseFloat(document.getElementById('recitationWeight').value);
+            const exam = parseFloat(document.getElementById('examWeight').value);
+            
+            // Validate total is 1.0
+            const total = attendance + quiz + activity + assignment + recitation + exam;
+            if (Math.abs(total - 1.0) > 0.01) {
+                alert('The sum of all weights must equal 100%. Current total: ' + (total * 100).toFixed(0) + '%');
+                return;
+            }
+            
+            // Update grade weights
+            gradeWeights = {
+                attendance,
+                quiz,
+                activity,
+                assignment,
+                recitation,
+                exam
+            };
+            
+            // Update computation method and passing grade
+            courseGradeComputationMethod = document.getElementById('gradeComputationMethod').value;
+            coursePassingGrade = parseFloat(document.getElementById('passingGradeInput').value);
+            
+            // Save to database
+            fetch('course_api.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    course_id: courseId,
+                    grade_weights: gradeWeights,
+                    grade_computation_method: courseGradeComputationMethod,
+                    passing_grade: coursePassingGrade
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Grade weights and settings saved successfully!');
+                    closeGradeWeightsModal();
+                    
+                    // Recalculate grades with new weights
+                    if (currentStudent) {
+                        calculateMidtermGrade();
+                        calculateFinalGrade();
+                        calculateSemestralGrade();
+                    }
+                } else {
+                    alert('Error saving grade weights: ' + data.message);
+                }
+            })
+            .catch(error => {
+                alert('Error saving grade weights: ' + error.message);
+            });
+        }
+        
+        // Add event listeners for weight inputs
+        function setupWeightInputListeners() {
+            const weightInputs = ['attendanceWeight', 'quizWeight', 'activityWeight', 'assignmentWeight', 'recitationWeight', 'examWeight'];
+            
+            weightInputs.forEach(inputId => {
+                const input = document.getElementById(inputId);
+                if (input) {
+                    input.addEventListener('input', updateWeightPercentages);
+                }
+            });
+        }
+        
+        // Function to update weight percentages when inputs change
+        function updateWeightPercentages() {
+            // Update the percentage label next to the input that changed
+            const value = parseFloat(this.value) * 100;
+            const percentageLabel = this.nextElementSibling;
+            if (percentageLabel && percentageLabel.classList.contains('weight-percentage')) {
+                percentageLabel.textContent = value.toFixed(0) + '%';
+            }
+            
+            // Update total class participation weight
+            const attendance = parseFloat(document.getElementById('attendanceWeight').value) || 0;
+            const quiz = parseFloat(document.getElementById('quizWeight').value) || 0;
+            const activity = parseFloat(document.getElementById('activityWeight').value) || 0;
+            const assignment = parseFloat(document.getElementById('assignmentWeight').value) || 0;
+            const recitation = parseFloat(document.getElementById('recitationWeight').value) || 0;
+            
+            const totalClassParticipation = (attendance + quiz + activity + assignment + recitation) * 100;
+            document.getElementById('totalClassParticipationWeight').textContent = totalClassParticipation.toFixed(0) + '%';
+        }
+        
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
             loadCourseInfo();
+            setupWeightInputListeners();
             
             const attendanceForm = document.getElementById('attendanceForm');
             const modal = document.getElementById('attendanceModal');
+            const gradeWeightsModal = document.getElementById('gradeWeightsModal');
             
             // Close modal when clicking outside
             window.onclick = function(event) {

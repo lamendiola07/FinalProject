@@ -141,9 +141,9 @@ function getScores() {
             foreach ($items as $item) {
                 $stmt = $pdo->prepare("
                     SELECT score FROM individual_scores 
-                    WHERE course_student_id = ? AND item_type = ? AND item_id = ?
+                    WHERE course_student_id = ? AND item_type = ? AND item_id = ? AND term = ?
                 ");
-                $stmt->execute([$student['course_student_id'], $type, $item['id']]);
+                $stmt->execute([$student['course_student_id'], $type, $item['id'], $term]);
                 $score = $stmt->fetchColumn();
                 
                 $scores[$student['student_number']][$item['id']] = $score !== false ? floatval($score) : 0;
@@ -194,9 +194,9 @@ function getAllData() {
             foreach ($items as $item) {
                 $stmt = $pdo->prepare("
                     SELECT score FROM individual_scores 
-                    WHERE course_student_id = ? AND item_type = ? AND item_id = ?
+                    WHERE course_student_id = ? AND item_type = ? AND item_id = ? AND term = ?
                 ");
-                $stmt->execute([$student['course_student_id'], $type, $item['id']]);
+                $stmt->execute([$student['course_student_id'], $type, $item['id'], $term]);
                 $score = $stmt->fetchColumn();
                 
                 $scores[$student['student_number']][$item['id']] = $score !== false ? floatval($score) : 0;
@@ -330,11 +330,11 @@ function saveScores($input) {
             
             foreach ($studentScores as $itemId => $score) {
                 $stmt = $pdo->prepare("
-                    INSERT INTO individual_scores (course_student_id, item_type, item_id, score) 
-                    VALUES (?, ?, ?, ?) 
+                    INSERT INTO individual_scores (course_student_id, item_type, item_id, term, score) 
+                    VALUES (?, ?, ?, ?, ?) 
                     ON DUPLICATE KEY UPDATE score = VALUES(score), updated_at = CURRENT_TIMESTAMP
                 ");
-                $stmt->execute([$courseStudentId, $type, $itemId, $score]);
+                $stmt->execute([$courseStudentId, $type, $itemId, $term, $score]);
             }
         }
         
@@ -355,8 +355,9 @@ function updateScore($input) {
     $itemId = $input['item_id'] ?? '';
     $type = $input['type'] ?? '';
     $score = $input['score'] ?? 0;
+    $term = $input['term'] ?? ''; // Add this line to get the term parameter
     
-    if (!$courseId || !$studentNumber || !$itemId || !$type) {
+    if (!$courseId || !$studentNumber || !$itemId || !$type || !$term) { // Add term to validation
         echo json_encode(['success' => false, 'message' => 'Missing required parameters']);
         return;
     }
@@ -378,11 +379,11 @@ function updateScore($input) {
         }
         
         $stmt = $pdo->prepare("
-            INSERT INTO individual_scores (course_student_id, item_type, item_id, score) 
-            VALUES (?, ?, ?, ?) 
+            INSERT INTO individual_scores (course_student_id, item_type, item_id, term, score) 
+            VALUES (?, ?, ?, ?, ?) 
             ON DUPLICATE KEY UPDATE score = VALUES(score), updated_at = CURRENT_TIMESTAMP
         ");
-        $stmt->execute([$courseStudentId, $type, $itemId, $score]);
+        $stmt->execute([$courseStudentId, $type, $itemId, $term, $score]);
         
         echo json_encode(['success' => true, 'message' => 'Score updated successfully']);
     } catch (PDOException $e) {
